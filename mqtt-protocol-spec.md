@@ -131,6 +131,19 @@ All topics will follow the pattern: `farm/{deviceID}/{component}/{action}`
 }
 ```
 
+### LCD
+- Type: Controller
+- Topics:
+  - Status: `farm/{deviceID}/lcd/state`
+  - Control: `farm/{deviceID}/lcd/cmd`
+- Payload:
+```json
+{
+    "message": "Hello World!",
+    "duration": 10
+}
+```
+
 ## Example Usage
 
 ### Publishing sensor data:
