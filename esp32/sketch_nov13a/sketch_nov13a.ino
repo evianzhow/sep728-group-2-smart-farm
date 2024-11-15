@@ -27,6 +27,12 @@
 #define FANPIN1         19
 #define FANPIN2         18
 #define BUZZERPIN       16
+#define ULTRATRIGPIN    12
+#define ULTRAECHOPIN    13
+
+// Defined by https://docs.keyestudio.com/projects/KS0567/en/latest/wiki/Arduino/arduino.html#project-6-smart-feeding-system
+#define ULTRARANGEMIN   2
+#define ULTRARANGEMAX   8
 
 #define TZ_America_New_York	PSTR("EST5EDT,M3.2.0,M11.1.0")
 
@@ -50,7 +56,7 @@ dht11 DHT11;
 Servo myservo;
 
 // Variables for sensor values
-int Temperature, Humidity, SoilHumidity, Light, WaterLevel, Rainwater;
+int Temperature, Humidity, SoilHumidity, Light, WaterLevel, Rainwater, Distance;
 unsigned long lastPublish = 0;
 const unsigned long publishInterval = 5000; // Publish every 5 seconds
 
@@ -122,6 +128,8 @@ void setup() {
   pinMode(FANPIN1, OUTPUT);
   pinMode(FANPIN2, OUTPUT);
   pinMode(BUZZERPIN, OUTPUT);
+  pinMode(ULTRATRIGPIN,OUTPUT);  //set trig pin to output mode
+  pinMode(ULTRAECHOPIN,INPUT);   //set echo pin to input mode
   
   myservo.attach(SERVOPIN);
 }
@@ -249,6 +257,13 @@ void publishSensorData() {
   doc["percentage"] = map(Rainwater, 0, 4095, 0, 100);
   serializeJson(doc, mqtt_payload);
   mqtt.publish(createTopic("steam", "state").c_str(), mqtt_payload);
+
+  // Publish ultrasonic sensor data
+  doc.clear();
+  doc["value"] = Distance;
+  doc["unit"] = "cm";
+  serializeJson(doc, mqtt_payload);
+  mqtt.publish(createTopic("ultrasonic", "state").c_str(), mqtt_payload);
 }
 
 void handleMQTTCallback(char* topic, byte* payload, unsigned int length) {
@@ -358,6 +373,15 @@ void getSensorsData() {
   WaterLevel = analogRead(WATERLEVELPIN) * 2.5;
   Temperature = DHT11.temperature;
   Humidity = DHT11.humidity;
+  // Added ultrasonic sensor
+  int duration;
+  digitalWrite(ULTRATRIGPIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(ULTRATRIGPIN, HIGH);
+  delayMicroseconds(10);	//Trigger the trig pin via a high level lasting at least 10us
+  digitalWrite(ULTRATRIGPIN, LOW);
+  duration = pulseIn(ULTRAECHOPIN, HIGH);	//the time of high level at echo pin
+  Distance = max(ULTRARANGEMIN, min(duration / 58, ULTRARANGEMAX));		//convert into distance(cm)
 }
 
 // Add new buzzer control function
