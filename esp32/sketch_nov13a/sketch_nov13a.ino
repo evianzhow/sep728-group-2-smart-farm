@@ -13,6 +13,7 @@
 #include <ESP32_Servo.h>
 #include <LiquidCrystal_I2C.h>
 #include "WifiCredentials.h"
+#include <time.h>
 
 // Pin Definitions (unchanged)
 #define DHT11PIN        17
@@ -26,6 +27,8 @@
 #define FANPIN1         19
 #define FANPIN2         18
 #define BUZZERPIN       16
+
+#define TZ_America_New_York	PSTR("EST5EDT,M3.2.0,M11.1.0")
 
 // and MQTT Configuration
 const char* mqtt_server = "06a68c084516440da5d6c84b6514ed49.s1.eu.hivemq.cloud";  // Replace with your MQTT broker
@@ -62,6 +65,25 @@ void publishSensorData();
 void handleMQTTCallback(char* topic, byte* payload, unsigned int length);
 String createTopic(const char* component, const char* action);
 
+void setDateTime() {
+  // You can use your own timezone, but the exact time is not used at all.
+  // Only the date is needed for validating the certificates.
+  configTzTime(TZ_America_New_York, "pool.ntp.org", "time.nist.gov");
+
+  Serial.print("Waiting for NTP time sync: ");
+  time_t now = time(nullptr);
+  while (now < 8 * 3600 * 2) {
+    delay(100);
+    Serial.print(".");
+    now = time(nullptr);
+  }
+  Serial.println();
+
+  struct tm timeinfo;
+  gmtime_r(&now, &timeinfo);
+  Serial.printf("%s %s", tzname[0], asctime(&timeinfo));
+}
+
 void setup() {
   Serial.begin(9600);
   
@@ -79,6 +101,9 @@ void setup() {
   // https://console.hivemq.cloud/clients/arduino-esp8266?uuid=06a68c084516440da5d6c84b6514ed49&clusterType=free&image=/assets/guides/arduino.svg
   espClient.setInsecure();
   
+  // Initialize NTP Client
+  setDateTime();
+
   // Initialize MQTT
   setupMQTT();
   
