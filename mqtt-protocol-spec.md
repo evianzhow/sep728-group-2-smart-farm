@@ -6,8 +6,11 @@ All topics will follow the pattern: `farm/{deviceID}/{component}/{action}`
 - `component`: Sensor or controller name
 - `action`: Either `state` (for current status) or `cmd` (for commands)
 
-## Device ID
+## Timestamp Format
+All messages must include an ISO 8601 timestamp in the format: `YYYY-MM-DDTHH:mm:ss.sssZ`
+Example: `2024-11-18T14:30:00.000Z`
 
+## Device ID
 Device ID should be `esp32_01` in this case
 
 ## Sensors (Input Devices)
@@ -16,14 +19,14 @@ Device ID should be `esp32_01` in this case
 - Type: Sensor
 - Value Type: Boolean
 - Topic: `farm/{deviceID}/button/state`
-- Payload: `{"pressed": true|false}`
+- Payload: `{"pressed": true|false, "timestamp": "ISO8601_TIMESTAMP"}`
 
 ### Steam Sensor
 - Type: Sensor
 - Value Type: Integer
 - Range: 0-4095
 - Topic: `farm/{deviceID}/steam/state`
-- Payload: `{"value": 0-4095, "percentage": 0-100}`
+- Payload: `{"value": 0-4095, "percentage": 0-100, "timestamp": "ISO8601_TIMESTAMP"}`
 
 ### DHT11 Temperature and Humidity Sensor
 - Type: Sensor
@@ -43,7 +46,8 @@ Device ID should be `esp32_01` in this case
     },
     "dewPoint": {
         "celsius": 0-50
-    }
+    },
+    "timestamp": "ISO8601_TIMESTAMP"
 }
 ```
 
@@ -52,35 +56,35 @@ Device ID should be `esp32_01` in this case
 - Value Type: Boolean
 - Topic: `farm/{deviceID}/pir/state`
 - Event will be trigger when the state flips (not detected -> detected and vice versa)
-- Payload: `{"motion_detected": true|false}`
+- Payload: `{"motion_detected": true|false, "timestamp": "ISO8601_TIMESTAMP"}`
 
 ### Soil Humidity Sensor
 - Type: Sensor
 - Value Type: Integer
 - Range: 0-4095
 - Topic: `farm/{deviceID}/soil/state`
-- Payload: `{"raw": 0-4095, "percentage": 0-100}`
+- Payload: `{"raw": 0-4095, "percentage": 0-100, "timestamp": "ISO8601_TIMESTAMP"}`
 
 ### Water Level Sensor
 - Type: Sensor
 - Value Type: Integer
 - Range: 0-4095
 - Topic: `farm/{deviceID}/water/state`
-- Payload: `{"raw": 0-4095, "percentage": 0-100}`
+- Payload: `{"raw": 0-4095, "percentage": 0-100, "timestamp": "ISO8601_TIMESTAMP"}`
 
 ### SR01 V3 Ultrasonic Module
 - Type: Sensor
 - Value Type: Float
 - Range: 3-8 cm
 - Topic: `farm/{deviceID}/ultrasonic/state`
-- Payload: `{"distance": 3-8, "unit": "cm"}`
+- Payload: `{"distance": 3-8, "unit": "cm", "timestamp": "ISO8601_TIMESTAMP"}`
 
 ### Photoresistor
 - Type: Sensor
 - Value Type: Integer
 - Range: >0
 - Topic: `farm/{deviceID}/light/state`
-- Payload: `{"value": >0, "percentage": 0-100}`
+- Payload: `{"value": >0, "percentage": 0-100, "timestamp": "ISO8601_TIMESTAMP"}`
 
 ## Controllers (Output Devices)
 
@@ -95,7 +99,8 @@ Device ID should be `esp32_01` in this case
 {
     "active": true|false,
     "frequency": 0-20000,
-    "duration": 0-65535
+    "duration": 0-65535,
+    "timestamp": "ISO8601_TIMESTAMP"
 }
 ```
 
@@ -105,21 +110,21 @@ Device ID should be `esp32_01` in this case
   - Status: `farm/{deviceID}/fan/state`
   - Control: `farm/{deviceID}/fan/cmd`
 - `0` stands for stop the fan, `255` will be the maximum speed
-- Payload: `{"speed": 0-255}`
+- Payload: `{"speed": 0-255, "timestamp": "ISO8601_TIMESTAMP"}`
 
 ### 5V Relay Module
 - Type: Controller
 - Topics:
   - Status: `farm/{deviceID}/relay/state`
   - Control: `farm/{deviceID}/relay/cmd`
-- Payload: `{"active": true|false}`
+- Payload: `{"active": true|false, "timestamp": "ISO8601_TIMESTAMP"}`
 
 ### White LED Module
 - Type: Controller
 - Topics:
   - Status: `farm/{deviceID}/led/state`
   - Control: `farm/{deviceID}/led/cmd`
-- Payload: `{"active": true|false}`
+- Payload: `{"active": true|false, "timestamp": "ISO8601_TIMESTAMP"}`
 
 ### Servo
 - Type: Controller
@@ -135,7 +140,8 @@ Device ID should be `esp32_01` in this case
 ```json
 {
     "angle": 0-180,
-    "position": "OPEN|HALF_OPEN|CLOSED"
+    "position": "OPEN|HALF_OPEN|CLOSED",
+    "timestamp": "ISO8601_TIMESTAMP"
 }
 ```
 
@@ -149,7 +155,8 @@ Device ID should be `esp32_01` in this case
 ```json
 {
     "message": "Hello World!",
-    "duration": 10000
+    "duration": 10000,
+    "timestamp": "ISO8601_TIMESTAMP"
 }
 ```
 
@@ -158,13 +165,30 @@ Device ID should be `esp32_01` in this case
 ### Publishing sensor data:
 ```
 Topic: farm/esp32_01/dht11/state
-Payload: {"humidity":{"value":45.2,"unit":"%"},"temperature":{"celsius":24.5,"fahrenheit":76.1,"kelvin":297.65},"dewPoint":{"celsius":12.3}}
+Payload: {
+    "humidity": {
+        "value": 45.2,
+        "unit": "%"
+    },
+    "temperature": {
+        "celsius": 24.5,
+        "fahrenheit": 76.1,
+        "kelvin": 297.65
+    },
+    "dewPoint": {
+        "celsius": 12.3
+    },
+    "timestamp": "2024-11-18T14:30:00.000Z"
+}
 ```
 
 ### Controlling a device:
 ```
 Topic: farm/esp32_01/servo/cmd
-Payload: {"position":"HALF_OPEN"}
+Payload: {
+    "position": "HALF_OPEN",
+    "timestamp": "2024-11-18T14:30:00.000Z"
+}
 ```
 
 ### Error Handling
