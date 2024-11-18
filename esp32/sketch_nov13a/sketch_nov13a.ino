@@ -47,7 +47,8 @@ const char* mqtt_user = "esp32";       // If required
 const char* mqtt_password = "h4pPyhack!ng";   // If required
 const char* device_id = "esp32_01";           // Unique device ID
 
-ezButton button(BUTTONPIN);  // create ezButton object that attach to pin 7;
+ezButton button(BUTTONPIN);  // create ezButton object that attach to pin 5;
+ezButton pyroElec(PYROELECPIN, EXTERNAL_PULLDOWN);
 
 // MQTT Topics
 char topic_buffer[128];
@@ -62,7 +63,8 @@ dht11 DHT11;
 Servo myservo;
 
 // Variables for sensor values
-int Temperature, Humidity, SoilHumidity, Light, WaterLevel, Rainwater, Distance;
+float Temperature, Humidity;
+int SoilHumidity, Light, WaterLevel, Rainwater, Distance;
 unsigned long lastPublish = 0;
 const unsigned long publishInterval = 5000; // Publish every 5 seconds
 
@@ -137,7 +139,9 @@ void setup() {
   pinMode(ULTRATRIGPIN, OUTPUT);  //set trig pin to output mode
   pinMode(ULTRAECHOPIN, INPUT);   //set echo pin to input mode
   pinMode(PYROELECPIN, INPUT);
-  button.setDebounceTime(50); // set debounce time to 50 milliseconds
+  // set debounce time to 50 milliseconds
+  button.setDebounceTime(50);
+  pyroElec.setDebounceTime(50);
 
   myservo.attach(SERVOPIN);
 }
@@ -167,6 +171,7 @@ void updateLCDStatus() {
 
 void loop() {
   button.loop(); // MUST call the loop() function first
+  pyroElec.loop();
 
   if (!mqtt.connected()) {
     reconnectMQTT();
@@ -192,14 +197,24 @@ void loop() {
   }
 
   // Detect real-time event like PIR & Button
-  if(button.isPressed()) {
+  if (button.isPressed()) {
     Serial.println("The button is pressed");
     handleButtonEvent(true);
   }
 
-  if(button.isReleased()) {
+  if (button.isReleased()) {
     Serial.println("The button is released");
     handleButtonEvent(false);
+  }
+
+  if (pyroElec.isPressed()) {
+    Serial.println("Motion detected!");
+    handleMotionEvent(true);
+  }
+
+  if (pyroElec.isReleased()) {
+    Serial.println("Motion stopped!");
+    handleMotionEvent(false);
   }
 }
 
@@ -248,6 +263,8 @@ void publishSensorData() {
   temperature["celsius"] = Temperature;
   temperature["fahrenheit"] = (Temperature * 9.0/5.0) + 32;
   temperature["kelvin"] = Temperature + 273.15;
+  JsonObject dewPointJson = doc.createNestedObject("dewPoint");
+  dewPointJson["celsius"] = dewPoint(Temperature, Humidity);
   serializeJson(doc, mqtt_payload);
   mqtt.publish(createTopic("dht11", "state").c_str(), mqtt_payload);
 
@@ -392,8 +409,8 @@ void getSensorsData() {
   Light = analogRead(LIGHTPIN);
   SoilHumidity = analogRead(SOILHUMIDITYPIN) * 2.3;
   WaterLevel = analogRead(WATERLEVELPIN) * 2.5;
-  Temperature = DHT11.temperature;
-  Humidity = DHT11.humidity;
+  Temperature = (float)DHT11.temperature;
+  Humidity = (float)DHT11.humidity;
   // Added ultrasonic sensor
   int duration;
   digitalWrite(ULTRATRIGPIN, LOW);
@@ -443,3 +460,40 @@ void handleButtonEvent(bool status) {
   serializeJson(doc, mqtt_payload);
   mqtt.publish(createTopic("button", "state").c_str(), mqtt_payload);
 }
+
+// Added motion event
+void handleMotionEvent(bool status) {
+  StaticJsonDocument<512> doc;
+  char mqtt_payload[MQTT_BUFFER_SIZE];
+
+  doc["motion_detected"] = status;
+  serializeJson(doc, mqtt_payload);
+  mqtt.publish(createTopic("pir", "state").c_str(), mqtt_payload);
+}
+
+//Dew Point. The air is saturated and dews are produced under this temperature.
+//Reference: http://wahiduddin.net/calc/density_algorithms.htm 
+double dewPoint(double celsius, double humidity)
+{
+  double A0= 373.15/(273.15 + celsius);
+  double SUM = -7.90298 * (A0-1);
+  SUM += 5.02808 * log10(A0);
+  SUM += -1.3816e-7 * (pow(10, (11.344*(1-1/A0)))-1) ;
+  SUM += 8.1328e-3 * (pow(10,(-3.49149*(A0-1)))-1) ;
+  SUM += log10(1013.246);
+  double VP = pow(10, SUM-3) * humidity;
+  double T = log(VP/0.61078);   // temp var
+  return (241.88 * T) / (17.558-T);
+}
+
+// Fast calculate the Dew Point, its speed is 5 times of dewPoint()
+// Reference: http://en.wikipedia.org/wiki/Dew_point
+double dewPointFast(double celsius, double humidity)
+{
+  double a = 17.271;
+  double b = 237.7;
+  double temp = (a * celsius) / (b + celsius) + log(humidity/100);
+  double Td = (b * temp) / (a - temp);
+  return Td;
+}
+
