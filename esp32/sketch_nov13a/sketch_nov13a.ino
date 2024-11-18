@@ -342,8 +342,8 @@ void handleMQTTCallback(char* topic, byte* payload, unsigned int length) {
   else if (topicStr == createTopic("fan", "cmd")) {
     int speed = doc["speed"];
     if (speed > 0) {
-      ledcWrite(1, min(speed, 255));
-      ledcWrite(3, 0);
+      ledcWrite(1, 0);
+      ledcWrite(3, min(speed, 255));
     } else {
       ledcWrite(1, 0);
       ledcWrite(3, 0);
