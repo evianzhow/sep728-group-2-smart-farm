@@ -271,6 +271,7 @@ void publishSensorData() {
   temperature["kelvin"] = Temperature + 273.15;
   JsonObject dewPointJson = doc.createNestedObject("dewPoint");
   dewPointJson["celsius"] = dewPoint(Temperature, Humidity);
+  doc["timestamp"] = getISOTimestamp();
   serializeJson(doc, mqtt_payload);
   mqtt.publish(createTopic("dht11", "state").c_str(), mqtt_payload);
 
@@ -278,6 +279,7 @@ void publishSensorData() {
   doc.clear();
   doc["raw"] = SoilHumidity;
   doc["percentage"] = map(SoilHumidity, 0, 4095, 0, 100);
+  doc["timestamp"] = getISOTimestamp();
   serializeJson(doc, mqtt_payload);
   mqtt.publish(createTopic("soil", "state").c_str(), mqtt_payload);
 
@@ -285,6 +287,7 @@ void publishSensorData() {
   doc.clear();
   doc["value"] = Light;
   doc["percentage"] = map(Light, 0, 4095, 0, 100);
+  doc["timestamp"] = getISOTimestamp();
   serializeJson(doc, mqtt_payload);
   mqtt.publish(createTopic("light", "state").c_str(), mqtt_payload);
 
@@ -292,6 +295,7 @@ void publishSensorData() {
   doc.clear();
   doc["raw"] = WaterLevel;
   doc["percentage"] = map(WaterLevel, 0, 4095, 0, 100);
+  doc["timestamp"] = getISOTimestamp();
   serializeJson(doc, mqtt_payload);
   mqtt.publish(createTopic("water", "state").c_str(), mqtt_payload);
 
@@ -299,6 +303,7 @@ void publishSensorData() {
   doc.clear();
   doc["value"] = Rainwater;
   doc["percentage"] = map(Rainwater, 0, 4095, 0, 100);
+  doc["timestamp"] = getISOTimestamp();
   serializeJson(doc, mqtt_payload);
   mqtt.publish(createTopic("steam", "state").c_str(), mqtt_payload);
 
@@ -306,6 +311,7 @@ void publishSensorData() {
   doc.clear();
   doc["value"] = Distance;
   doc["unit"] = "cm";
+  doc["timestamp"] = getISOTimestamp();
   serializeJson(doc, mqtt_payload);
   mqtt.publish(createTopic("ultrasonic", "state").c_str(), mqtt_payload);
 }
@@ -323,19 +329,23 @@ void handleMQTTCallback(char* topic, byte* payload, unsigned int length) {
   }
 
   String topicStr = String(topic);
+  // Add timestamp to incoming command
+  doc["timestamp"] = getISOTimestamp();
+  char timestampedJson[256];
+  serializeJson(doc, timestampedJson);
 
   // LED control
   if (topicStr == createTopic("led", "cmd")) {
     bool active = doc["active"];
     digitalWrite(LEDPIN, active ? HIGH : LOW);
-    mqtt.publish(createTopic("led", "state").c_str(), json);
+    mqtt.publish(createTopic("led", "state").c_str(), timestampedJson);
   }
   
   // Relay (water pump) control
   else if (topicStr == createTopic("relay", "cmd")) {
     bool active = doc["active"];
     digitalWrite(RELAYPIN, active ? HIGH : LOW);
-    mqtt.publish(createTopic("relay", "state").c_str(), json);
+    mqtt.publish(createTopic("relay", "state").c_str(), timestampedJson);
   }
   
   // Fan control
@@ -348,7 +358,7 @@ void handleMQTTCallback(char* topic, byte* payload, unsigned int length) {
       ledcWrite(1, 0);
       ledcWrite(3, 0);
     }
-    mqtt.publish(createTopic("fan", "state").c_str(), json);
+    mqtt.publish(createTopic("fan", "state").c_str(), timestampedJson);
   }
   
   // Servo control
@@ -362,7 +372,7 @@ void handleMQTTCallback(char* topic, byte* payload, unsigned int length) {
       else if (strcmp(position, "HALF_OPEN") == 0) myservo.write(120);
       else if (strcmp(position, "CLOSED") == 0) myservo.write(180);
     }
-    mqtt.publish(createTopic("servo", "state").c_str(), json);
+    mqtt.publish(createTopic("servo", "state").c_str(), timestampedJson);
   }
   
   // Buzzer control
@@ -375,6 +385,7 @@ void handleMQTTCallback(char* topic, byte* payload, unsigned int length) {
     stateDoc["active"] = (frequency > 0 && duration > 0);
     stateDoc["frequency"] = frequency;
     stateDoc["duration"] = duration;
+    stateDoc["timestamp"] = getISOTimestamp();
     
     char statePayload[200];
     serializeJson(stateDoc, statePayload);
@@ -393,7 +404,8 @@ void handleMQTTCallback(char* topic, byte* payload, unsigned int length) {
     StaticJsonDocument<200> stateDoc;
     stateDoc["message"] = message;
     stateDoc["duration"] = duration; // milliseconds
-    
+    stateDoc["timestamp"] = getISOTimestamp();
+
     char statePayload[200];
     serializeJson(stateDoc, statePayload);
     mqtt.publish(createTopic("lcd", "state").c_str(), statePayload);
@@ -458,6 +470,7 @@ void handleButtonEvent(bool status) {
   char mqtt_payload[MQTT_BUFFER_SIZE];
 
   doc["pressed"] = status;
+  doc["timestamp"] = getISOTimestamp();
   serializeJson(doc, mqtt_payload);
   mqtt.publish(createTopic("button", "state").c_str(), mqtt_payload);
 }
@@ -468,6 +481,7 @@ void handleMotionEvent(bool status) {
   char mqtt_payload[MQTT_BUFFER_SIZE];
 
   doc["motion_detected"] = status;
+  doc["timestamp"] = getISOTimestamp();
   serializeJson(doc, mqtt_payload);
   mqtt.publish(createTopic("pir", "state").c_str(), mqtt_payload);
 }
@@ -498,3 +512,13 @@ double dewPointFast(double celsius, double humidity)
   return Td;
 }
 
+// Add this helper function to get ISO 8601 timestamp
+String getISOTimestamp() {
+  struct tm timeinfo;
+  if (!getLocalTime(&timeinfo)) {
+    return "1970-01-01T00:00:00.000Z"; // Return epoch if time not set
+  }
+  char timestamp[30];
+  strftime(timestamp, sizeof(timestamp), "%Y-%m-%dT%H:%M:%S.000Z", &timeinfo);
+  return String(timestamp);
+}
