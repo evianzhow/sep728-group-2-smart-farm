@@ -118,16 +118,15 @@ All topics will follow the pattern: `farm/{deviceID}/{component}/{action}`
 - Topics:
   - Status: `farm/{deviceID}/servo/state`
   - Control: `farm/{deviceID}/servo/cmd`
+  - Preset Angles: 
+    - OPEN: 80
+    - HALF_OPEN: 120
+    - CLOSED: 180
 - Payload:
 ```json
 {
     "angle": 0-180,
-    "position": "OPEN|HALF_OPEN|CLOSED",
-    "preset_angles": {
-        "OPEN": 80,
-        "HALF_OPEN": 120,
-        "CLOSED": 180
-    }
+    "position": "OPEN|HALF_OPEN|CLOSED"
 }
 ```
 

@@ -25,8 +25,8 @@
 #define LEDPIN          27
 #define RELAYPIN        25
 #define SERVOPIN        26
-#define FANPIN1         19
-#define FANPIN2         18
+#define FANPIN1         19 // (IN+)
+#define FANPIN2         18 // (IN-)
 #define BUZZERPIN       16
 #define ULTRATRIGPIN    12
 #define ULTRAECHOPIN    13
@@ -142,6 +142,12 @@ void setup() {
   // set debounce time to 50 milliseconds
   button.setDebounceTime(50);
   pyroElec.setDebounceTime(50);
+
+   // Set PWM output to adjust the speed of motor
+  ledcSetup(1, 1200, 8); // Set frequency of LEDC Channel 1 to 1200, PWM resolution to 8, so duty cycle = 256
+  ledcAttachPin(FANPIN1, 1); // Bound LEDC Channel 1 to the specified left motor pin gpio19 to output.
+  ledcSetup(3, 1200, 8); // Set frequency of LEDC Channel 3 to 1200, PWM resolution to 8, so duty cycle = 256
+  ledcAttachPin(FANPIN2, 3); // Bound LEDC Channel 3 to the specified left motor pin gpio18 to output.
 
   myservo.attach(SERVOPIN);
 }
@@ -329,11 +335,6 @@ void handleMQTTCallback(char* topic, byte* payload, unsigned int length) {
   else if (topicStr == createTopic("relay", "cmd")) {
     bool active = doc["active"];
     digitalWrite(RELAYPIN, active ? HIGH : LOW);
-    if (active) {
-      delay(400);
-      digitalWrite(RELAYPIN, LOW);
-      delay(650);
-    }
     mqtt.publish(createTopic("relay", "state").c_str(), json);
   }
   
@@ -341,11 +342,11 @@ void handleMQTTCallback(char* topic, byte* payload, unsigned int length) {
   else if (topicStr == createTopic("fan", "cmd")) {
     int speed = doc["speed"];
     if (speed > 0) {
-      analogWrite(FANPIN1, speed);
-      digitalWrite(FANPIN2, LOW);
+      ledcWrite(1, min(speed, 255));
+      ledcWrite(3, 0);
     } else {
-      digitalWrite(FANPIN1, LOW);
-      digitalWrite(FANPIN2, LOW);
+      ledcWrite(1, 0);
+      ledcWrite(3, 0);
     }
     mqtt.publish(createTopic("fan", "state").c_str(), json);
   }
@@ -391,7 +392,7 @@ void handleMQTTCallback(char* topic, byte* payload, unsigned int length) {
     // Create state payload
     StaticJsonDocument<200> stateDoc;
     stateDoc["message"] = message;
-    stateDoc["duration"] = duration;
+    stateDoc["duration"] = duration; // milliseconds
     
     char statePayload[200];
     serializeJson(stateDoc, statePayload);
@@ -444,7 +445,7 @@ void controlBuzzer(int frequency, int duration) {
 // Add new function to update LCD with temporary message
 void updateLCDWithMessage(const String& message, int duration) {
   lcdCustomMessage = message;
-  lcdMessageTimeout = millis() + (duration * 1000); // Convert to milliseconds
+  lcdMessageTimeout = millis() + duration;
   lcd.setCursor(0, 1);
   lcd.print("                "); // Clear line first
   lcd.setCursor(0, 1);
