@@ -14,6 +14,7 @@
 #include <LiquidCrystal_I2C.h>
 #include "WifiCredentials.h"
 #include <time.h>
+#include <ezButton.h>
 
 // Pin Definitions (unchanged)
 #define DHT11PIN        17
@@ -34,6 +35,9 @@
 #define ULTRARANGEMIN   2
 #define ULTRARANGEMAX   8
 
+#define BUTTONPIN       5
+#define PYROELECPIN     23
+
 #define TZ_America_New_York	PSTR("EST5EDT,M3.2.0,M11.1.0")
 
 // and MQTT Configuration
@@ -42,6 +46,8 @@ const int mqtt_port = 8883;
 const char* mqtt_user = "esp32";       // If required
 const char* mqtt_password = "h4pPyhack!ng";   // If required
 const char* device_id = "esp32_01";           // Unique device ID
+
+ezButton button(BUTTONPIN);  // create ezButton object that attach to pin 7;
 
 // MQTT Topics
 char topic_buffer[128];
@@ -128,9 +134,11 @@ void setup() {
   pinMode(FANPIN1, OUTPUT);
   pinMode(FANPIN2, OUTPUT);
   pinMode(BUZZERPIN, OUTPUT);
-  pinMode(ULTRATRIGPIN,OUTPUT);  //set trig pin to output mode
-  pinMode(ULTRAECHOPIN,INPUT);   //set echo pin to input mode
-  
+  pinMode(ULTRATRIGPIN, OUTPUT);  //set trig pin to output mode
+  pinMode(ULTRAECHOPIN, INPUT);   //set echo pin to input mode
+  pinMode(PYROELECPIN, INPUT);
+  button.setDebounceTime(50); // set debounce time to 50 milliseconds
+
   myservo.attach(SERVOPIN);
 }
 
@@ -158,6 +166,8 @@ void updateLCDStatus() {
 }
 
 void loop() {
+  button.loop(); // MUST call the loop() function first
+
   if (!mqtt.connected()) {
     reconnectMQTT();
   }
@@ -179,6 +189,17 @@ void loop() {
     getSensorsData();
     publishSensorData();
     lastPublish = millis();
+  }
+
+  // Detect real-time event like PIR & Button
+  if(button.isPressed()) {
+    Serial.println("The button is pressed");
+    handleButtonEvent(true);
+  }
+
+  if(button.isReleased()) {
+    Serial.println("The button is released");
+    handleButtonEvent(false);
   }
 }
 
@@ -411,4 +432,14 @@ void updateLCDWithMessage(const String& message, int duration) {
   lcd.print("                "); // Clear line first
   lcd.setCursor(0, 1);
   lcd.print(message);
+}
+
+// Added button event
+void handleButtonEvent(bool status) {
+  StaticJsonDocument<512> doc;
+  char mqtt_payload[MQTT_BUFFER_SIZE];
+
+  doc["pressed"] = status;
+  serializeJson(doc, mqtt_payload);
+  mqtt.publish(createTopic("button", "state").c_str(), mqtt_payload);
 }
