@@ -6,6 +6,10 @@ All topics will follow the pattern: `farm/{deviceID}/{component}/{action}`
 - `component`: Sensor or controller name
 - `action`: Either `state` (for current status) or `cmd` (for commands)
 
+## Device ID
+
+Device ID should be `esp32_01` in this case
+
 ## Sensors (Input Devices)
 
 ### Button Module
@@ -24,6 +28,7 @@ All topics will follow the pattern: `farm/{deviceID}/{component}/{action}`
 ### DHT11 Temperature and Humidity Sensor
 - Type: Sensor
 - Topic: `farm/{deviceID}/dht11/state`
+- According to Datasheet of DHT11, humidity & temperature will be integer value, dew point was calculated with formula, so its type should be float
 - Payload:
 ```json
 {
@@ -46,6 +51,7 @@ All topics will follow the pattern: `farm/{deviceID}/{component}/{action}`
 - Type: Sensor
 - Value Type: Boolean
 - Topic: `farm/{deviceID}/pir/state`
+- Event will be trigger when the state flips (not detected -> detected and vice versa)
 - Payload: `{"motion_detected": true|false}`
 
 ### Soil Humidity Sensor
@@ -83,6 +89,7 @@ All topics will follow the pattern: `farm/{deviceID}/{component}/{action}`
 - Topics:
   - Status: `farm/{deviceID}/buzzer/state`
   - Control: `farm/{deviceID}/buzzer/cmd`
+- `duration` is in milliseconds
 - Payload:
 ```json
 {
@@ -97,6 +104,7 @@ All topics will follow the pattern: `farm/{deviceID}/{component}/{action}`
 - Topics:
   - Status: `farm/{deviceID}/fan/state`
   - Control: `farm/{deviceID}/fan/cmd`
+- `0` stands for stop the fan, `255` will be the maximum speed
 - Payload: `{"speed": 0-255}`
 
 ### 5V Relay Module
@@ -122,6 +130,7 @@ All topics will follow the pattern: `farm/{deviceID}/{component}/{action}`
     - OPEN: 80
     - HALF_OPEN: 120
     - CLOSED: 180
+- Either `angle` or `position` will work but `angle` has first priority
 - Payload:
 ```json
 {
@@ -135,11 +144,12 @@ All topics will follow the pattern: `farm/{deviceID}/{component}/{action}`
 - Topics:
   - Status: `farm/{deviceID}/lcd/state`
   - Control: `farm/{deviceID}/lcd/cmd`
+- `duration` is in milliseconds
 - Payload:
 ```json
 {
     "message": "Hello World!",
-    "duration": 10
+    "duration": 10000
 }
 ```
 
