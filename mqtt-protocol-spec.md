@@ -63,14 +63,14 @@ Device ID should be `esp32_01` in this case
 - Value Type: Integer
 - Range: 0-4095
 - Topic: `farm/{deviceID}/soil/state`
-- Payload: `{"raw": 0-4095, "percentage": 0-100, "timestamp": "ISO8601_TIMESTAMP"}`
+- Payload: `{"value": 0-4095, "percentage": 0-100, "timestamp": "ISO8601_TIMESTAMP"}`
 
 ### Water Level Sensor
 - Type: Sensor
 - Value Type: Integer
 - Range: 0-4095
 - Topic: `farm/{deviceID}/water/state`
-- Payload: `{"raw": 0-4095, "percentage": 0-100, "timestamp": "ISO8601_TIMESTAMP"}`
+- Payload: `{"value": 0-4095, "percentage": 0-100, "timestamp": "ISO8601_TIMESTAMP"}`
 
 ### SR01 V3 Ultrasonic Module
 - Type: Sensor

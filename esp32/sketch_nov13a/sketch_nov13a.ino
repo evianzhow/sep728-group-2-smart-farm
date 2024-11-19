@@ -277,7 +277,7 @@ void publishSensorData() {
 
   // Publish soil humidity
   doc.clear();
-  doc["raw"] = SoilHumidity;
+  doc["value"] = SoilHumidity;
   doc["percentage"] = map(SoilHumidity, 0, 4095, 0, 100);
   doc["timestamp"] = getISOTimestamp();
   serializeJson(doc, mqtt_payload);
@@ -293,7 +293,7 @@ void publishSensorData() {
 
   // Publish water level
   doc.clear();
-  doc["raw"] = WaterLevel;
+  doc["value"] = WaterLevel;
   doc["percentage"] = map(WaterLevel, 0, 4095, 0, 100);
   doc["timestamp"] = getISOTimestamp();
   serializeJson(doc, mqtt_payload);
