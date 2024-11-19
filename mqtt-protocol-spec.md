@@ -99,8 +99,7 @@ Device ID should be `esp32_01` in this case
 {
     "active": true|false,
     "frequency": 0-20000,
-    "duration": 0-65535,
-    "timestamp": "ISO8601_TIMESTAMP"
+    "duration": 0-65535
 }
 ```
 
@@ -110,21 +109,21 @@ Device ID should be `esp32_01` in this case
   - Status: `farm/{deviceID}/fan/state`
   - Control: `farm/{deviceID}/fan/cmd`
 - `0` stands for stop the fan, `255` will be the maximum speed
-- Payload: `{"speed": 0-255, "timestamp": "ISO8601_TIMESTAMP"}`
+- Payload: `{"speed": 0-255}`
 
 ### 5V Relay Module
 - Type: Controller
 - Topics:
   - Status: `farm/{deviceID}/relay/state`
   - Control: `farm/{deviceID}/relay/cmd`
-- Payload: `{"active": true|false, "timestamp": "ISO8601_TIMESTAMP"}`
+- Payload: `{"active": true|false}`
 
 ### White LED Module
 - Type: Controller
 - Topics:
   - Status: `farm/{deviceID}/led/state`
   - Control: `farm/{deviceID}/led/cmd`
-- Payload: `{"active": true|false, "timestamp": "ISO8601_TIMESTAMP"}`
+- Payload: `{"active": true|false}`
 
 ### Servo
 - Type: Controller
@@ -141,7 +140,6 @@ Device ID should be `esp32_01` in this case
 {
     "angle": 0-180,
     "position": "OPEN|HALF_OPEN|CLOSED",
-    "timestamp": "ISO8601_TIMESTAMP"
 }
 ```
 
@@ -156,7 +154,6 @@ Device ID should be `esp32_01` in this case
 {
     "message": "Hello World!",
     "duration": 10000,
-    "timestamp": "ISO8601_TIMESTAMP"
 }
 ```
 
