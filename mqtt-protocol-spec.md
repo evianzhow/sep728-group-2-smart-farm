@@ -153,7 +153,7 @@ Device ID should be `esp32_01` in this case
 ```json
 {
     "message": "Hello World!",
-    "duration": 10000,
+    "duration": 10000
 }
 ```
 

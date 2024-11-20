@@ -144,10 +144,10 @@ void setup() {
   pyroElec.setDebounceTime(50);
 
    // Set PWM output to adjust the speed of motor
-  ledcSetup(1, 1200, 8); // Set frequency of LEDC Channel 1 to 1200, PWM resolution to 8, so duty cycle = 256
-  ledcAttachPin(FANPIN1, 1); // Bound LEDC Channel 1 to the specified left motor pin gpio19 to output.
-  ledcSetup(3, 1200, 8); // Set frequency of LEDC Channel 3 to 1200, PWM resolution to 8, so duty cycle = 256
-  ledcAttachPin(FANPIN2, 3); // Bound LEDC Channel 3 to the specified left motor pin gpio18 to output.
+  ledcSetup(14, 1200, 8); // Set frequency of LEDC Channel 14 to 1200, PWM resolution to 8, so duty cycle = 256
+  ledcAttachPin(FANPIN1, 14); // Bound LEDC Channel 1 to the specified left motor pin gpio19 to output.
+  ledcSetup(15, 1200, 8); // Set frequency of LEDC Channel 15 to 1200, PWM resolution to 8, so duty cycle = 256
+  ledcAttachPin(FANPIN2, 15); // Bound LEDC Channel 3 to the specified left motor pin gpio18 to output.
 
   myservo.attach(SERVOPIN);
 }
@@ -352,11 +352,11 @@ void handleMQTTCallback(char* topic, byte* payload, unsigned int length) {
   else if (topicStr == createTopic("fan", "cmd")) {
     int speed = doc["speed"];
     if (speed > 0) {
-      ledcWrite(1, 0);
-      ledcWrite(3, min(speed, 255));
+      ledcWrite(14, 0);
+      ledcWrite(15, min(speed, 255));
     } else {
-      ledcWrite(1, 0);
-      ledcWrite(3, 0);
+      ledcWrite(14, 0);
+      ledcWrite(15, 0);
     }
     mqtt.publish(createTopic("fan", "state").c_str(), timestampedJson);
   }
