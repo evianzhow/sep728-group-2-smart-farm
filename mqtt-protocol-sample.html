@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MQTT Data Sample</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .data-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .data-entry {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .topic, .qos, .json {
+            margin: 5px 0;
+        }
+        .json {
+            font-family: monospace;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+    <h1>MQTT Data Sample</h1>
+    <div class="data-container">
+        <!-- Entries will be dynamically generated -->
+    </div>
+
+    <script>
+        // Sample data from the markdown file
+        const data = [
+            { topic: "farm/esp32_01/light/state", qos: 0, json: { "value": 2663, "percentage": 65, "timestamp": "2024-11-20T11:18:17.000Z" } },
+            { topic: "farm/esp32_01/water/state", qos: 0, json: { "value": 0, "percentage": 0, "timestamp": "2024-11-20T11:18:17.000Z" } },
+            { topic: "farm/esp32_01/steam/state", qos: 0, json: { "value": 0, "percentage": 0, "timestamp": "2024-11-20T11:18:17.000Z" } },
+            { topic: "farm/esp32_01/ultrasonic/state", qos: 0, json: { "value": 8, "unit": "cm", "timestamp": "2024-11-20T11:18:17.000Z" } },
+            { topic: "farm/esp32_01/dht11/state", qos: 0, json: { "humidity":{"value":36,"unit":"%"},"temperature":{"celsius":25,"fahrenheit":77,"kelvin":298.15},"dewPoint":{"celsius":8.913886708},"timestamp":"2024-11-20T11:49:30.000Z" } },
+            { topic: "farm/esp32_01/soil/state", qos: 0, json: { "value": 0, "percentage": 0, "timestamp": "2024-11-20T11:18:17.000Z" } },
+            { topic: "farm/esp32_01/pir/state", qos: 0, json: {"motion_detected":true,"timestamp":"2024-11-20T11:49:29.000Z"} },
+            { topic: "farm/esp32_01/pir/state", qos: 0, json: { "motion_detected": false, "timestamp": "2024-11-20T11:18:17.000Z" } },
+            { topic: "farm/esp32_01/button/state", qos: 0, json: {"pressed":true,"timestamp":"2024-11-20T11:49:28.000Z"} },
+            { topic: "farm/esp32_01/button/state", qos: 0, json: {"pressed":false,"timestamp":"2024-11-20T11:49:28.000Z"} },
+            { topic: "farm/esp32_01/fan/cmd", qos: 0, json: {"speed": 0} },
+            { topic: "farm/esp32_01/fan/state", qos: 0, json: {"speed":0,"timestamp":"2024-11-20T11:53:32.000Z"} },
+            { topic: "farm/esp32_01/fan/cmd", qos: 0, json: {"speed": 140} },
+            { topic: "farm/esp32_01/fan/state", qos: 0, json: {"speed":140,"timestamp":"2024-11-20T11:53:44.000Z"} },
+            { topic: "farm/esp32_01/buzzer/cmd", qos: 0, json: {"frequency": 6000, "duration": 1000} },
+            { topic: "farm/esp32_01/buzzer/state", qos: 0, json: {"active":true,"frequency":6000,"duration":1000,"timestamp":"2024-11-20T11:57:28.000Z"} },
+            { topic: "farm/esp32_01/relay/cmd", qos: 0, json: {"active": true} },
+            { topic: "farm/esp32_01/relay/state", qos: 0, json: {"active":true,"timestamp":"2024-11-20T11:57:51.000Z"} },
+            { topic: "farm/esp32_01/relay/cmd", qos: 0, json: {"active": false} },
+            { topic: "farm/esp32_01/relay/state", qos: 0, json: {"active":false,"timestamp":"2024-11-20T11:57:54.000Z"} },
+            { topic: "farm/esp32_01/led/cmd", qos: 0, json: {"active": true} },
+            { topic: "farm/esp32_01/led/state", qos: 0, json: {"active":true,"timestamp":"2024-11-20T11:58:13.000Z"} },
+            { topic: "farm/esp32_01/servo/cmd", qos: 0, json: {"position": "OPEN"} },
+            { topic: "farm/esp32_01/servo/state", qos: 0, json: {"position":"OPEN","timestamp":"2024-11-20T11:58:42.000Z"} },
+            { topic: "farm/esp32_01/lcd/cmd", qos: 0, json: {"message": "Hello World!", "duration": 10000} },
+            { topic: "farm/esp32_01/lcd/state", qos: 0, json: {"message":"Hello World!","duration":10000,"timestamp":"2024-11-20T11:59:08.000Z"} },
+        ];
+
+        const container = document.querySelector('.data-container');
+
+        data.forEach(entry => {
+            const entryDiv = document.createElement('div');
+            entryDiv.className = 'data-entry';
+
+            const topicDiv = document.createElement('div');
+            topicDiv.className = 'topic';
+            topicDiv.innerHTML = `<strong>Topic:</strong> ${entry.topic}`;
+            entryDiv.appendChild(topicDiv);
+
+            const qosDiv = document.createElement('div');
+            qosDiv.className = 'qos';
+            qosDiv.innerHTML = `<strong>QoS:</strong> ${entry.qos}`;
+            entryDiv.appendChild(qosDiv);
+
+            const jsonDiv = document.createElement('div');
+            jsonDiv.className = 'json';
+            jsonDiv.innerHTML = `<strong>Data:</strong> <pre>${JSON.stringify(entry.json, null, 2)}</pre>`;
+            entryDiv.appendChild(jsonDiv);
+
+            container.appendChild(entryDiv);
+        });
+    </script>
+</body>
+</html>
