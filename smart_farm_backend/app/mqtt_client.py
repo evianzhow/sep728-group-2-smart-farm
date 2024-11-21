@@ -6,6 +6,7 @@ from app.models import (
     WaterLevel, Ultrasonic, Photoresistor, Buzzer, Fan, Relay, LED, Servo, LCD
 )
 from app.database import SessionLocal
+from app.config import Config
 
 COMPONENT_CLASS_MAP = {
     "steam": Steam,
@@ -51,7 +52,9 @@ def on_message(client, userdata, message):
 
 def start_mqtt_client():
     mqtt_client.on_message = on_message
-    mqtt_client.connect("broker.hivemq.com", 1883)
+    mqtt_client.username_pw_set(Config.MQTT_USERNAME, Config.MQTT_PASSWORD)
+    
+    mqtt_client.connect(Config.MQTT_BROKER, Config.MQTT_PORT)
 
     while True:  # Reconnect loop for resilience
         try:

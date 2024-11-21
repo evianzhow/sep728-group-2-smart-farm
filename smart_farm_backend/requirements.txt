@@ -3,3 +3,4 @@ uvicorn
 sqlalchemy
 paho-mqtt
 python-dotenv
+passlib[bcrypt]
