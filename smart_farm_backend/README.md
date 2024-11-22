@@ -31,3 +31,15 @@ db.commit()
 MQTT broker credentials can be edit from `app/config.py` and username and password can be specified from the command line:
 
 Run the server: `python run.py --mqtt-username username --mqtt-password password`
+
+### Todos
+
+- [ ] Fix MQTT on_message callback, should be able to store different types of sensors and controllers states to the database (SQLite), had issues right now.
+- [ ] Implement login and authentication features, validate user token from headers with all endpoints except for the login endpoint
+- [ ] Added sensors and controllers `GET /sensors/*/preview` and `GET /controllers/*/preview` endpoints, should be able to get the latest state of a sensor or controller
+- [ ] Added sensors and controllers `POST /sensors/*` and `POST /controllers/*` endpoints
+- [ ] Added sensors and controllers `GET /sensors/*/history` and `GET /controllers/*/history` endpoints with pagination features
+- [ ] Added sensors and controllers `GET /sensors/*/chart` endpoints, should be able to convert history data to chart-compatible data for better frontend processing
+- [ ] Added rules CRUD endpoints
+- [ ] Added rules engine to trigger controllers based on rules
+
