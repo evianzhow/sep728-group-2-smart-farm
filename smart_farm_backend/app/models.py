@@ -11,6 +11,11 @@ class SensorDataBase(Base):
     component = Column(String, index=True)
     timestamp = Column(DateTime)
 
+    def __init__(self, **kwargs):
+        if 'timestamp' in kwargs and isinstance(kwargs['timestamp'], str):
+            kwargs['timestamp'] = datetime.fromisoformat(kwargs['timestamp'].replace('Z', '+00:00'))
+        super().__init__(**kwargs)
+
     @declared_attr
     def __tablename__(cls):
         return cls.__name__.lower()
@@ -46,7 +51,7 @@ class WaterLevel(SensorDataBase):
     percentage = Column(Float)
 
 class Ultrasonic(SensorDataBase):
-    distance = Column(Float)
+    value = Column(Float)
     unit = Column(String, default="cm")
 
 class Photoresistor(SensorDataBase):

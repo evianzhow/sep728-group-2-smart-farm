@@ -51,14 +51,51 @@ def on_message(client, userdata, message):
     try:
         payload = json.loads(message.payload)
         component = message.topic.split("/")[2]
-        model_class = COMPONENT_CLASS_MAP.get(component)
+        device_id = message.topic.split("/")[1]
 
-        if model_class:
-            record = model_class(**payload, device_id=message.topic.split("/")[1])
-            db.add(record)
+        if component == "dht11":
+            # Handle composite DHT11 sensor data
+            timestamp = payload.get("timestamp")
+            
+            # Handle humidity
+            if "humidity" in payload:
+                humidity_data = {
+                    "value": payload["humidity"]["value"],
+                    "timestamp": timestamp
+                }
+                record = COMPONENT_CLASS_MAP["humidity"](**humidity_data, device_id=device_id)
+                db.add(record)
+
+            # Handle temperature
+            if "temperature" in payload:
+                temp_data = {
+                    "celsius": payload["temperature"]["celsius"],
+                    "fahrenheit": payload["temperature"]["fahrenheit"],
+                    "kelvin": payload["temperature"]["kelvin"],
+                    "timestamp": timestamp
+                }
+                record = COMPONENT_CLASS_MAP["temperature"](**temp_data, device_id=device_id)
+                db.add(record)
+
+            # Handle dewPoint
+            if "dewPoint" in payload:
+                dewpoint_data = {
+                    "celsius": payload["dewPoint"]["celsius"],
+                    "timestamp": timestamp
+                }
+                record = COMPONENT_CLASS_MAP["dewPoint"](**dewpoint_data, device_id=device_id)
+                db.add(record)
+
             db.commit()
         else:
-            print(f"Unknown component type: {component}")
+            # Handle regular single-component sensors
+            model_class = COMPONENT_CLASS_MAP.get(component)
+            if model_class:
+                record = model_class(**payload, device_id=device_id)
+                db.add(record)
+                db.commit()
+            else:
+                print(f"Unknown component type: {component}")
     except Exception as e:
         print(f"Error processing message: {e}")
     finally:
