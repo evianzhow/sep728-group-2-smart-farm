@@ -1,4 +1,5 @@
-from paho.mqtt.client import Client
+import paho.mqtt.client as paho
+from paho import mqtt
 import json
 import time
 from app.models import (
@@ -27,7 +28,20 @@ COMPONENT_CLASS_MAP = {
     "lcd": LCD,
 }
 
-mqtt_client = Client()
+# setting callbacks for different events to see if it works, print the message etc.
+def on_connect(client, userdata, flags, rc, properties=None):
+    print("CONNACK received with code %s." % rc)
+
+# with this callback you can see if your publish was successful
+def on_publish(client, userdata, mid, properties=None):
+    print("mid: " + str(mid))
+
+# print which topic was subscribed to
+def on_subscribe(client, userdata, mid, granted_qos, properties=None):
+    print("Subscribed: " + str(mid) + " " + str(granted_qos))
+
+
+mqtt_client = paho.Client(client_id="", userdata=None, protocol=paho.MQTTv31)
 
 def mqtt_publish(topic, payload):
     mqtt_client.publish(topic, json.dumps(payload))
@@ -50,12 +64,33 @@ def on_message(client, userdata, message):
     finally:
         db.close()
 
+def on_connect(client, userdata, flags, rc):
+    print(f"Connected with result code {rc}")
+    client.subscribe("farm/+/+/state", qos=0)
+    client.message_callback_add("farm/+/+/state", on_message)
+
+
 def start_mqtt_client():
-    mqtt_client.on_message = on_message
+    # using MQTT version 5 here, for 3.1.1: MQTTv311, 3.1: MQTTv31
+    # userdata is user defined data of any type, updated by user_data_set()
+    # client_id is the given name of the client
+    mqtt_client.on_connect = on_connect
+
+    # enable TLS for secure connection
+    mqtt_client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
     mqtt_client.username_pw_set(Config.MQTT_USERNAME, Config.MQTT_PASSWORD)
-    
     mqtt_client.connect(Config.MQTT_BROKER, Config.MQTT_PORT)
 
+    # setting callbacks, use separate functions like above for better visibility
+    mqtt_client.on_subscribe = on_subscribe
+    mqtt_client.on_message = on_message
+    mqtt_client.on_publish = on_publish
+
+    # subscribe to all topics of encyclopedia by using the wildcard "#"
+    mqtt_client.subscribe("farm/+/+/state", qos=0)
+
+    # loop_forever for simplicity, here you need to stop the loop manually
+    # you can also use loop_start and loop_stop
     while True:  # Reconnect loop for resilience
         try:
             mqtt_client.loop_forever()
