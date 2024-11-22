@@ -97,6 +97,34 @@ GET /sensors/light/history
 }
 ```
 
+#### Get Light Chart Data
+```http
+GET /sensors/light/chart
+```
+
+**Query Parameters:**
+- `start_time`: ISO datetime string
+- `end_time`: ISO datetime string
+- `interval`: string (optional, default: "hour", enum: ["minute", "hour", "day"]), when using preview, interval must be "minute"
+
+**Response (200 OK):**
+```json
+{
+  "data": [
+    { // Data will be aggregated and calculated of mean by interval
+      "timestamp": 1700480400000,  // Unix timestamp in milliseconds
+      "value": 2663,
+      "percentage": 65
+    }
+  ],
+  "metadata": {
+    "start_time": 1700480400000,
+    "end_time": 1700484000000,
+    "interval": "hour",
+  }
+}
+```
+
 ### Water Sensor
 
 #### Get Latest Water Reading
@@ -139,6 +167,34 @@ GET /sensors/water/history
     "total_pages": 10,
     "total_items": 250,
     "per_page": 25
+  }
+}
+```
+
+#### Get Water Chart Data
+```http
+GET /sensors/water/chart
+```
+
+**Query Parameters:**
+- `start_time`: ISO datetime string
+- `end_time`: ISO datetime string
+- `interval`: string (optional, default: "hour", enum: ["minute", "hour", "day"])
+
+**Response (200 OK):**
+```json
+{
+  "data": [
+    {
+      "timestamp": 1700480400000,  // Unix timestamp in milliseconds
+      "value": 0,
+      "percentage": 0
+    }
+  ],
+  "metadata": {
+    "start_time": 1700480400000,
+    "end_time": 1700484000000,
+    "interval": "hour",
   }
 }
 ```
@@ -190,6 +246,34 @@ GET /sensors/steam/history
 }
 ```
 
+#### Get Steam Chart Data
+```http
+GET /sensors/steam/chart
+```
+
+**Query Parameters:**
+- `start_time`: ISO datetime string
+- `end_time`: ISO datetime string
+- `interval`: string (optional, default: "hour", enum: ["minute", "hour", "day"])
+
+**Response (200 OK):**
+```json
+{
+  "data": [
+    {
+      "timestamp": 1700480400000,  // Unix timestamp in milliseconds
+      "value": 0,
+      "percentage": 0
+    }
+  ],
+  "metadata": {
+    "start_time": 1700480400000,
+    "end_time": 1700484000000,
+    "interval": "hour",
+  }
+}
+```
+
 ### Ultrasonic Sensor
 
 #### Get Latest Ultrasonic Reading
@@ -232,6 +316,34 @@ GET /sensors/ultrasonic/history
     "total_pages": 10,
     "total_items": 250,
     "per_page": 25
+  }
+}
+```
+
+#### Get Ultrasonic Chart Data
+```http
+GET /sensors/ultrasonic/chart
+```
+
+**Query Parameters:**
+- `start_time`: ISO datetime string
+- `end_time`: ISO datetime string
+- `interval`: string (optional, default: "hour", enum: ["minute", "hour", "day"])
+
+**Response (200 OK):**
+```json
+{
+  "data": [
+    {
+      "timestamp": 1700480400000,  // Unix timestamp in milliseconds
+      "value": 8,
+      "unit": "cm"
+    }
+  ],
+  "metadata": {
+    "start_time": 1700480400000,
+    "end_time": 1700484000000,
+    "interval": "hour",
   }
 }
 ```
@@ -336,6 +448,36 @@ GET /sensors/dht11/temperature/history
 }
 ```
 
+#### Get Temperature Chart Data
+```http
+GET /sensors/dht11/temperature/chart
+```
+
+**Query Parameters:**
+- `start_time`: ISO datetime string
+- `end_time`: ISO datetime string
+- `interval`: string (optional, default: "hour", enum: ["minute", "hour", "day"])
+- `unit`: string (optional, default: "celsius", enum: ["celsius", "fahrenheit", "kelvin"])
+
+**Response (200 OK):**
+```json
+{
+  "data": [
+    {
+      "timestamp": 1700480400000,  // Unix timestamp in milliseconds
+      "value": 25,
+      "unit": "celsius"
+    }
+  ],
+  "metadata": {
+    "start_time": 1700480400000,
+    "end_time": 1700484000000,
+    "interval": "hour",
+    "unit": "celsius"
+  }
+}
+```
+
 #### Get Humidity History
 ```http
 GET /sensors/dht11/humidity/history
@@ -368,6 +510,34 @@ GET /sensors/dht11/humidity/history
 }
 ```
 
+#### Get Humidity Chart Data
+```http
+GET /sensors/dht11/humidity/chart
+```
+
+**Query Parameters:**
+- `start_time`: ISO datetime string
+- `end_time`: ISO datetime string
+- `interval`: string (optional, default: "hour", enum: ["minute", "hour", "day"])
+
+**Response (200 OK):**
+```json
+{
+  "data": [
+    {
+      "timestamp": 1700480400000,  // Unix timestamp in milliseconds
+      "value": 36,
+      "unit": "%"
+    }
+  ],
+  "metadata": {
+    "start_time": 1700480400000,
+    "end_time": 1700484000000,
+    "interval": "hour",
+  }
+}
+```
+
 #### Get Dew Point History
 ```http
 GET /sensors/dht11/dewpoint/history
@@ -395,6 +565,35 @@ GET /sensors/dht11/dewpoint/history
     "total_pages": 10,
     "total_items": 250,
     "per_page": 25
+  }
+}
+```
+
+#### Get Dew Point Chart Data
+```http
+GET /sensors/dht11/dewpoint/chart
+```
+
+**Query Parameters:**
+- `start_time`: ISO datetime string
+- `end_time`: ISO datetime string
+- `interval`: string (optional, default: "hour", enum: ["minute", "hour", "day"])
+- `unit`: string (optional, default: "celsius", enum: ["celsius"])
+
+**Response (200 OK):**
+```json
+{
+  "data": [
+    {
+      "timestamp": 1700480400000,  // Unix timestamp in milliseconds
+      "value": 8.913886708,
+      "unit": "celsius"
+    }
+  ],
+  "metadata": {
+    "start_time": 1700480400000,
+    "end_time": 1700484000000,
+    "interval": "hour",
   }
 }
 ```
@@ -441,6 +640,34 @@ GET /sensors/soil/history
     "total_pages": 10,
     "total_items": 250,
     "per_page": 25
+  }
+}
+```
+
+#### Get Soil Moisture Chart Data
+```http
+GET /sensors/soil/chart
+```
+
+**Query Parameters:**
+- `start_time`: ISO datetime string
+- `end_time`: ISO datetime string
+- `interval`: string (optional, default: "hour", enum: ["minute", "hour", "day"])
+
+**Response (200 OK):**
+```json
+{
+  "data": [
+    {
+      "timestamp": 1700480400000,  // Unix timestamp in milliseconds
+      "value": 0,
+      "percentage": 0
+    }
+  ],
+  "metadata": {
+    "start_time": 1700480400000,
+    "end_time": 1700484000000,
+    "interval": "hour",
   }
 }
 ```
