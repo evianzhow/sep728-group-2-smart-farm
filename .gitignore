@@ -1,3 +1,4 @@
 
 esp32/sketch_nov13a/WifiCredentials.h
 *.bak
+smart_farm_backend/iot_data.db
