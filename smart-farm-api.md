@@ -787,6 +787,27 @@ GET /controllers/buzzer/preview
 }
 ```
 
+#### Set Buzzer State
+```http
+POST /controllers/buzzer
+```
+
+**Request Body:**
+```json
+{
+  "frequency": 6000,
+  "duration": 1000
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "error": false,
+  "error_message": null
+}
+```
+
 #### Get Buzzer History
 ```http
 GET /controllers/buzzer/history
@@ -830,6 +851,26 @@ GET /controllers/relay/preview
 {
   "active": true,
   "timestamp": "2024-11-20T11:57:51.000Z"
+}
+```
+
+#### Set Relay State
+```http
+POST /controllers/relay
+```
+
+**Request Body:**
+```json
+{
+  "active": true
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "error": false,
+  "error_message": null
 }
 ```
 
@@ -877,6 +918,26 @@ GET /controllers/led/preview
 }
 ```
 
+#### Set LED State
+```http
+POST /controllers/led
+```
+
+**Request Body:**
+```json
+{
+  "active": true
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "error": false,
+  "error_message": null
+}
+```
+
 #### Get LED History
 ```http
 GET /controllers/led/history
@@ -921,6 +982,32 @@ GET /controllers/servo/preview
 }
 ```
 
+#### Set Servo State
+```http
+POST /controllers/servo
+```
+
+**Request Body:**
+```json
+{
+  "position": "OPEN"
+}
+```
+**or**
+```json
+{
+  "angle": 90
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "error": false,
+  "error_message": null
+}
+```
+
 #### Get Servo History
 ```http
 GET /controllers/servo/history
@@ -947,6 +1034,10 @@ GET /controllers/servo/history
     {
       "position": "HALF_OPEN",
       "timestamp": "2024-11-20T11:58:42.000Z"
+    },
+    {
+      "angle": 90,
+      "timestamp": "2024-11-20T11:58:42.000Z"
     }
   ],
   "pagination": {
@@ -971,6 +1062,27 @@ GET /controllers/lcd/preview
   "message": "Hello World!",
   "duration": 10000,
   "timestamp": "2024-11-20T11:59:08.000Z"
+}
+```
+
+#### Set LCD State
+```http
+POST /controllers/lcd
+```
+
+**Request Body:**
+```json
+{
+  "message": "Hello World!",
+  "duration": 10000
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "error": false,
+  "error_message": null
 }
 ```
 
@@ -1016,6 +1128,26 @@ GET /controllers/fan/preview
 {
   "speed": 140,
   "timestamp": "2024-11-20T11:53:44.000Z"
+}
+```
+
+#### Set Fan State
+```http
+POST /controllers/fan
+```
+
+**Request Body:**
+```json
+{
+  "speed": 140 // 0-255, 0 is off
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "error": false,
+  "error_message": null
 }
 ```
 
