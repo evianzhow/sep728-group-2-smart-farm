@@ -7,9 +7,9 @@ from .sensors import sensors_router
 api_router = APIRouter()
 
 # Include individual routers
-api_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
-api_router.include_router(rules_router, prefix="/rules", tags=["Rules"])
-api_router.include_router(sensors_router, prefix="/sensors", tags=["Sensors"])
+api_router.include_router(auth_router, tags=["Authentication"])
+api_router.include_router(rules_router, tags=["Rules"])
+api_router.include_router(sensors_router, tags=["Sensors"])
 
 # Export the api_router as app for use in the main application
 app = api_router
