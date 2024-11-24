@@ -2,6 +2,7 @@ from fastapi import APIRouter, Query, Depends, Response, status, HTTPException
 from app.database import SessionLocal
 from app.models import Rule
 from .auth import get_current_user_from_request
+from app.utils import convert_datetime_to_iso8601
 
 rules_router = APIRouter()
 
@@ -9,6 +10,9 @@ rules_router = APIRouter()
 def get_rules(page: int = Query(default=1, ge=1), per_page: int = Query(default=25, ge=1), user=Depends(get_current_user_from_request)):
     db = SessionLocal()
     rules = db.query(Rule).offset((page - 1) * per_page).limit(per_page).all()
+
+    for rule in rules:
+        rule.created_at = convert_datetime_to_iso8601(rule.created_at)
 
     total_items = db.query(Rule).count()
     total_pages = (total_items + per_page - 1) // per_page
@@ -27,6 +31,8 @@ def get_rules(page: int = Query(default=1, ge=1), per_page: int = Query(default=
 def get_rule(rule_id: int, user=Depends(get_current_user_from_request)):
     db = SessionLocal()
     rule = db.query(Rule).filter(Rule.id == rule_id).first()
+    if rule is not None:
+        rule.created_at = convert_datetime_to_iso8601(rule.created_at)
     return rule
 
 @rules_router.post("/rules")
