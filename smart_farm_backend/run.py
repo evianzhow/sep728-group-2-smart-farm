@@ -1,11 +1,24 @@
-from app.mqtt_client import start_mqtt_client
+from app.mqtt_client import MQTTClientSingleton
 from app.routes import app
 from app.config import Config
 import threading
 import signal
 import sys
-
+import time
 Config.load_from_args()
+
+def start_mqtt_client():
+    mqtt_client = MQTTClientSingleton()
+    mqtt_client.connect(Config.MQTT_BROKER, Config.MQTT_PORT, Config.MQTT_USERNAME, Config.MQTT_PASSWORD)
+    
+    # loop_forever for simplicity, here you need to stop the loop manually
+    # you can also use loop_start and loop_stop
+    while True:  # Reconnect loop for resilience
+        try:
+            mqtt_client.loop_forever()
+        except Exception as e:
+            print(f"MQTT client error: {e}")
+            time.sleep(5)  # Retry after delay
 
 def handle_shutdown(signum, frame):
     print("Shutting down gracefully...")
