@@ -36,8 +36,8 @@ Run the server: `python run.py --mqtt-username username --mqtt-password password
 
 - [x] Fix MQTT on_message callback, should be able to store different types of sensors and controllers states to the database (SQLite), had issues right now.
 - [x] Implement login and authentication features, validate user token from headers with all endpoints except for the login endpoint
-- [ ] Added sensors and controllers `GET /sensors/*/preview` and `GET /controllers/*/preview` endpoints, should be able to get the latest state of a sensor or controller
-- [ ] Added sensors and controllers `POST /sensors/*` and `POST /controllers/*` endpoints
+- [x] Added sensors and controllers `GET /sensors/*/preview` and `GET /controllers/*/preview` endpoints, should be able to get the latest state of a sensor or controller
+- [x] Added controllers `POST /controllers/*` endpoints for controlling controllers
 - [ ] Added sensors and controllers `GET /sensors/*/history` and `GET /controllers/*/history` endpoints with pagination features
 - [ ] Added sensors and controllers `GET /sensors/*/chart` endpoints, should be able to convert history data to chart-compatible data for better frontend processing
 - [x] Added rules CRUD endpoints
