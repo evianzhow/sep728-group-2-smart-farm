@@ -52,3 +52,10 @@ def login(credentials: dict):
         sessions[token] = user.username
         return {"message": "Login successful", "token": token}
     raise HTTPException(status_code=401, detail="Invalid credentials")
+
+@auth_router.post("/logout")
+def logout(request: Request):
+    token = request.headers.get("Authorization")
+    if token:
+        del sessions[token]
+    return {"message": "Successfully logged out"}

@@ -40,6 +40,6 @@ Run the server: `python run.py --mqtt-username username --mqtt-password password
 - [ ] Added sensors and controllers `POST /sensors/*` and `POST /controllers/*` endpoints
 - [ ] Added sensors and controllers `GET /sensors/*/history` and `GET /controllers/*/history` endpoints with pagination features
 - [ ] Added sensors and controllers `GET /sensors/*/chart` endpoints, should be able to convert history data to chart-compatible data for better frontend processing
-- [ ] Added rules CRUD endpoints
+- [x] Added rules CRUD endpoints
 - [ ] Added rules engine to trigger controllers based on rules
 
