@@ -20,4 +20,5 @@ COPY . .
 RUN chmod +x startup.sh
 
 # Command to run the startup script
+ENTRYPOINT ["/bin/bash"]
 CMD ["./startup.sh"]
