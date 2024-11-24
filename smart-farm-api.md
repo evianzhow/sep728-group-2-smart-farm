@@ -350,67 +350,20 @@ GET /sensors/ultrasonic/chart
 
 ### DHT11 Sensor
 
-#### Get Latest Temperature and Humidity
+#### Get Temperature Preview
 ```http
-GET /sensors/dht11/preview
+GET /sensors/dht11/temperature/preview
 ```
 
 **Response (200 OK):**
 ```json
 {
-  "humidity": {
-    "value": 36,
-    "unit": "%"
-  },
   "temperature": {
     "celsius": 25,
     "fahrenheit": 77,
     "kelvin": 298.15
   },
-  "dewPoint": {
-    "celsius": 8.913886708
-  },
   "timestamp": "2024-11-20T11:49:30.000Z"
-}
-```
-
-#### Get Temperature and Humidity History
-```http
-GET /sensors/dht11/history
-```
-
-**Query Parameters:**
-- `page`: integer (default: 1)
-- `per_page`: integer (default: 25)
-- `start_time`: ISO datetime string
-- `end_time`: ISO datetime string
-
-**Response (200 OK):**
-```json
-{
-  "data": [
-    {
-      "humidity": {
-        "value": 36,
-        "unit": "%"
-      },
-      "temperature": {
-        "celsius": 25,
-        "fahrenheit": 77,
-        "kelvin": 298.15
-      },
-      "dewPoint": {
-        "celsius": 8.913886708
-      },
-      "timestamp": "2024-11-20T11:49:30.000Z"
-    }
-  ],
-  "pagination": {
-    "current_page": 1,
-    "total_pages": 10,
-    "total_items": 250,
-    "per_page": 25
-  }
 }
 ```
 
@@ -478,6 +431,22 @@ GET /sensors/dht11/temperature/chart
 }
 ```
 
+#### Get Humidity Preview
+```http
+GET /sensors/dht11/humidity/preview
+```
+
+**Response (200 OK):**
+```json
+{
+  "humidity": {
+    "value": 36,
+    "unit": "%"
+  },
+  "timestamp": "2024-11-20T11:49:30.000Z"
+}
+``` 
+
 #### Get Humidity History
 ```http
 GET /sensors/dht11/humidity/history
@@ -535,6 +504,21 @@ GET /sensors/dht11/humidity/chart
     "end_time": 1700484000000,
     "interval": "hour",
   }
+}
+```
+
+#### Get Dew Point Preview
+```http
+GET /sensors/dht11/dewpoint/preview
+```
+
+**Response (200 OK):**
+```json
+{
+  "dewpoint": {
+    "celsius": 8.913886708
+  },
+  "timestamp": "2024-11-20T11:49:30.000Z"
 }
 ```
 
