@@ -1191,6 +1191,10 @@ GET /controllers/fan/history
 GET /rules
 ```
 
+**Query Parameters:**
+- `page`: integer (default: 1)
+- `per_page`: integer (default: 25)
+
 **Response (200 OK):**
 ```json
 {

@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, JSON
+from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime
 from sqlalchemy.ext.declarative import declared_attr
 from app.database import Base
 

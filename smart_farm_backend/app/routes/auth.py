@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.security import HTTPBasic
 from app.database import SessionLocal
 from app.models import User
-from app.utils import hash_password, verify_password, create_session_token
+from app.utils import verify_password, create_session_token
 auth_router = APIRouter()
 security = HTTPBasic()
 
