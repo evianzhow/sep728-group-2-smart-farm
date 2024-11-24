@@ -2,7 +2,7 @@
 
 ## Base URL
 ```
-https://api.someexample.com/v1
+https://gorgeous-glowworm-definite.ngrok-free.app
 ```
 
 ## Authentication
