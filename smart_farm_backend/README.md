@@ -1,10 +1,22 @@
+## Docker deployment
+
+```
+docker-compose up --build
+```
+
+## Python development & deployment
+
 ### Instructions
 
 Install dependencies: `pip install -r requirements.txt`
 
 ### Database Initialization
 
-CLI script to create database and create users:
+Use `init_db.py` to create database and create users
+
+**OR**
+
+Manually create database and create users through the Python CLI:
 
 Type `python` to enter the Python CLI:
 
@@ -23,7 +35,6 @@ db = SessionLocal()
 new_user = User(username="admin", password=hash_password("securepassword"))
 db.add(new_user)
 db.commit()
-
 ```
 
 ### Run
