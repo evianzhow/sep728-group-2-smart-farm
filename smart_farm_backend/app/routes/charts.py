@@ -59,7 +59,10 @@ def bin_sensor_data(items, getter_func, interval: str = "hour"):
     return binned_data
 
 @charts_router.get("/sensors/light/chart")
-async def get_light_chart_data(start_time: str | None = Query(None), end_time: str | None = Query(None), interval: str = Query("hour"), user=Depends(get_current_user_from_request)):
+async def get_light_chart_data(start_time: str | None = Query(None), 
+                                 end_time: str | None = Query(None), 
+                                 interval: str = Query("hour"), 
+                                 user=Depends(get_current_user_from_request)):
     if interval not in ["minute", "hour", "day"]:
         raise HTTPException(status_code=400, detail="Invalid interval")
     
@@ -84,7 +87,10 @@ async def get_light_chart_data(start_time: str | None = Query(None), end_time: s
     }
 
 @charts_router.get("/sensors/water/chart")
-async def get_water_chart_data(start_time: str | None = Query(None), end_time: str | None = Query(None), interval: str = Query("hour"), user=Depends(get_current_user_from_request)):
+async def get_water_chart_data(start_time: str | None = Query(None),
+                                 end_time: str | None = Query(None), 
+                                 interval: str = Query("hour"), 
+                                 user=Depends(get_current_user_from_request)):
     if interval not in ["minute", "hour", "day"]:
         raise HTTPException(status_code=400, detail="Invalid interval")
     
@@ -109,7 +115,10 @@ async def get_water_chart_data(start_time: str | None = Query(None), end_time: s
     }
 
 @charts_router.get("/sensors/steam/chart")
-async def get_steam_chart_data(start_time: str | None = Query(None), end_time: str | None = Query(None), interval: str = Query("hour"), user=Depends(get_current_user_from_request)):
+async def get_steam_chart_data(start_time: str | None = Query(None), 
+                                 end_time: str | None = Query(None), 
+                                 interval: str = Query("hour"), 
+                                 user=Depends(get_current_user_from_request)):
     if interval not in ["minute", "hour", "day"]:
         raise HTTPException(status_code=400, detail="Invalid interval")
 
@@ -134,7 +143,10 @@ async def get_steam_chart_data(start_time: str | None = Query(None), end_time: s
     }
 
 @charts_router.get("/sensors/ultrasonic/chart")
-async def get_ultrasonic_chart_data(start_time: str | None = Query(None), end_time: str | None = Query(None), interval: str = Query("hour"), user=Depends(get_current_user_from_request)):
+async def get_ultrasonic_chart_data(start_time: str | None = Query(None), 
+                                      end_time: str | None = Query(None), 
+                                      interval: str = Query("hour"), 
+                                      user=Depends(get_current_user_from_request)):
     if interval not in ["minute", "hour", "day"]:
         raise HTTPException(status_code=400, detail="Invalid interval")
     
@@ -162,7 +174,11 @@ async def get_ultrasonic_chart_data(start_time: str | None = Query(None), end_ti
     }
 
 @charts_router.get("/sensors/dht11/temperature/chart")
-async def get_dht11_temperature_chart_data(start_time: str | None = Query(None), end_time: str | None = Query(None), interval: str = Query("hour"), unit: str = Query("celsius"), user=Depends(get_current_user_from_request)):
+async def get_dht11_temperature_chart_data(start_time: str | None = Query(None), 
+                                           end_time: str | None = Query(None), 
+                                           interval: str = Query("hour"), 
+                                           unit: str = Query("celsius"), 
+                                           user=Depends(get_current_user_from_request)):
     if interval not in ["minute", "hour", "day"]:
         raise HTTPException(status_code=400, detail="Invalid interval")
     if unit not in ["celsius", "fahrenheit", "kelvin"]:
@@ -193,7 +209,10 @@ async def get_dht11_temperature_chart_data(start_time: str | None = Query(None),
     }
 
 @charts_router.get("/sensors/dht11/humidity/chart")
-async def get_dht11_humidity_chart_data(start_time: str | None = Query(None), end_time: str | None = Query(None), interval: str = Query("hour"), user=Depends(get_current_user_from_request)):
+async def get_dht11_humidity_chart_data(start_time: str | None = Query(None), 
+                                          end_time: str | None = Query(None), 
+                                          interval: str = Query("hour"), 
+                                          user=Depends(get_current_user_from_request)):
     if interval not in ["minute", "hour", "day"]:
         raise HTTPException(status_code=400, detail="Invalid interval")
     
@@ -216,7 +235,10 @@ async def get_dht11_humidity_chart_data(start_time: str | None = Query(None), en
     }
 
 @charts_router.get("/sensors/dht11/dewpoint/chart")
-async def get_dht11_dewpoint_chart_data(start_time: str | None = Query(None), end_time: str | None = Query(None), interval: str = Query("hour"), user=Depends(get_current_user_from_request)):
+async def get_dht11_dewpoint_chart_data(start_time: str | None = Query(None), 
+                                          end_time: str | None = Query(None), 
+                                          interval: str = Query("hour"), 
+                                          user=Depends(get_current_user_from_request)):
     if interval not in ["minute", "hour", "day"]:
         raise HTTPException(status_code=400, detail="Invalid interval")
     
@@ -244,7 +266,10 @@ async def get_dht11_dewpoint_chart_data(start_time: str | None = Query(None), en
     }
 
 @charts_router.get("/sensors/soil/chart")
-async def get_soil_chart_data(start_time: str | None = Query(None), end_time: str | None = Query(None), interval: str = Query("hour"), user=Depends(get_current_user_from_request)):
+async def get_soil_chart_data(start_time: str | None = Query(None), 
+                                end_time: str | None = Query(None), 
+                                interval: str = Query("hour"), 
+                                user=Depends(get_current_user_from_request)):
     if interval not in ["minute", "hour", "day"]:
         raise HTTPException(status_code=400, detail="Invalid interval")
     
