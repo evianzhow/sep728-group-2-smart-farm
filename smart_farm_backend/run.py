@@ -1,10 +1,12 @@
 from app.mqtt_client import MQTTClientSingleton
 from app.routes import app
 from app.config import Config
+from app.rule_engine import start_rules_engine
 import threading
 import signal
 import sys
 import time
+
 Config.load_from_args()
 
 def start_mqtt_client():
@@ -34,6 +36,12 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, handle_shutdown)
     signal.signal(signal.SIGTERM, handle_shutdown)
     
+    # Start MQTT client in a separate thread
     mqtt_thread = threading.Thread(target=start_mqtt_client, daemon=True)
     mqtt_thread.start()
+
+    # Start Rules Engine in a separate thread
+    rules_thread = threading.Thread(target=start_rules_engine, daemon=True)
+    rules_thread.start()
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
