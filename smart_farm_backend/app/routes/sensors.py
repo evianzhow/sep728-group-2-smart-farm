@@ -7,6 +7,22 @@ from app.utils import convert_datetime_to_iso8601
 
 sensors_router = APIRouter()
 
+def get_sensor_history_all(model_class, start_time: str | None, end_time: str | None):
+    """Generic function to get sensor history"""
+    db = SessionLocal()
+
+    start_time = datetime.fromisoformat(start_time.replace('Z', '+00:00')) if start_time else None
+    end_time = datetime.fromisoformat(end_time.replace('Z', '+00:00')) if end_time else datetime.utcnow()
+
+    query = db.query(model_class)
+
+    if start_time and end_time:
+        query = query.filter(model_class.timestamp >= start_time, model_class.timestamp <= end_time)
+    else:
+        query = query.order_by(model_class.timestamp.desc())
+
+    return query.all()
+
 def get_sensor_history(model_class, page: int, per_page: int, start_time: str | None, end_time: str | None):
     """Generic function to get sensor history with pagination"""
     db = SessionLocal()
