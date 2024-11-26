@@ -232,6 +232,11 @@ async def get_dht11_humidity_chart_data(start_time: str | None = Query(None),
             }, 
             binned_values
         )),
+        "metadata": {
+            "start_time": start_ms,
+            "end_time": end_ms,
+            "interval": interval
+        }
     }
 
 @charts_router.get("/sensors/dht11/dewpoint/chart")
