@@ -1,7 +1,8 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declared_attr
 from app.database import Base
+from sqlalchemy.orm import relationship
 
 class SensorDataBase(Base):
     __abstract__ = True
@@ -85,11 +86,21 @@ class Rule(Base):
     __tablename__ = "rules"
     id = Column(Integer, primary_key=True, index=True)
     trigger_sensor = Column(String, nullable=False)
+    type = Column(String, nullable=False)
     op = Column(String, nullable=False)  # e.g., '>', '<=', etc.
     threshold = Column(Float, nullable=True)
     target_controller = Column(String, nullable=False)
     action = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class EventLog(Base):
+    __tablename__ = "event_logs"
+    id = Column(Integer, primary_key=True, index=True)
+    rule_id = Column(Integer, ForeignKey("rules.id"))
+    triggered_record_id = Column(Integer, nullable=False)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    rule = relationship("Rule", back_populates="event_logs")
 
 class User(Base):
     __tablename__ = "users"
