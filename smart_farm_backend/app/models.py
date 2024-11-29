@@ -92,6 +92,8 @@ class Rule(Base):
     target_controller = Column(String, nullable=False)
     action = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+    # Relationship
+    event_logs = relationship("EventLog", back_populates="rule")
 
 
 class EventLog(Base):
@@ -100,6 +102,7 @@ class EventLog(Base):
     rule_id = Column(Integer, ForeignKey("rules.id"))
     triggered_record_id = Column(Integer, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
+    # Relationship
     rule = relationship("Rule", back_populates="event_logs")
 
 class User(Base):
