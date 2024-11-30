@@ -43,7 +43,7 @@ def check_rules():
 def traverse_db_and_find_first_matched_record(db, model_class_name: str, rule: Rule):
     # print(f"Traversing DB for model class {model_class_name} and rule {rule.id}")
     model_class = COMPONENT_CLASS_MAP[model_class_name]
-    queries = db.query(model_class).order_by(model_class.timestamp.desc()).limit(100) # We only need the latest 100 records
+    queries = db.query(model_class).order_by(model_class.timestamp.desc()).limit(1) # We only need the latest record
     # return the first match meeting the rule
     for query in queries:
         match model_class_name:
