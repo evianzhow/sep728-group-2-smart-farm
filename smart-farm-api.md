@@ -1220,13 +1220,13 @@ POST /rules
 }
 ```
 
-- **Trigger sensor** must be sensors type: `steam.value`, `steam.percentage`, `dht11.humidity`, `dht11.temperature.celsius`, `dht11.temperature.fahrenheit`, `dht11.temperature.kelvin`, `dht11.dewpoint.celsius`, `soil.value`, `soil.percentage`, `water.value`, `water.percentage`, `ultrasonic.value`, `light.value`, `light.percentage`, or controller type: `button`, `pir`, `relay`, `servo`
+- **Trigger sensor** must be sensors type: `steam.value`, `steam.percentage`, `dht11.humidity`, `dht11.temperature.celsius`, `dht11.temperature.fahrenheit`, `dht11.temperature.kelvin`, `dht11.dewpoint.celsius`, `soil.value`, `soil.percentage`, `water.value`, `water.percentage`, `ultrasonic.value`, `light.value`, `light.percentage`, or controller type: `button`, `pir`, `relay`, `led`, `servo`
 - **Type** must be `threshold` if trigger sensor is **sensor** type, must be `event` if trigger sensor is **controller** type
 - **Op** must be `>`, `>=`, `<`, `<=`, `==`, `!=` if trigger sensor is **sensor** type
 - **Op** must obey the following rules if trigger sensor is **controller** type:
   - Op must be `pressed` or `released` if trigger sensor is **button** type
   - Op must be `detected` or `not-detected` if trigger sensor is **pir** type
-  - Op must be `active` or `inactive` if trigger sensor is **relay** type
+  - Op must be `active` or `inactive` if trigger sensor is **relay** or **led** type
   - Op must be `OPEN`, `HALF_OPEN`, or `CLOSED` if trigger sensor is **servo** type
 - **Threshold** is required if type is `threshold`
 - **Target controller** must be `buzzer`, `fan`, `relay`, `led`, `servo`, `lcd`
