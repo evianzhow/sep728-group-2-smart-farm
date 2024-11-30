@@ -35,8 +35,44 @@ def get_rule(rule_id: int, user=Depends(get_current_user_from_request)):
         rule.created_at = convert_datetime_to_iso8601(rule.created_at)
     return rule
 
+def validate_rule(request: dict):
+    trigger_sensor = request.get("trigger_sensor")
+    type = request.get("type")
+    op = request.get("op")
+    threshold = request.get("threshold")
+    target_controller = request.get("target_controller")
+
+    if type not in ["threshold", "event"]:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid rule type")
+    if trigger_sensor not in ["steam.value", "steam.percentage", "dht11.humidity", "dht11.temperature.celsius", "dht11.temperature.fahrenheit", "dht11.temperature.kelvin", "dht11.dewpoint.celsius", "soil.value", "soil.percentage", "water.value", "water.percentage", "ultrasonic.value", "light.value", "light.percentage"]:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid trigger sensor")
+    if target_controller not in ["buzzer", "fan", "relay", "led", "servo", "lcd"]:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid target controller")
+    if type == "threshold" and op not in [">", ">=", "<", "<=", "==", "!="]:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid operator")
+    if type == "threshold" and not threshold:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Threshold is required")
+    if type == "event":
+        if trigger_sensor == "button":
+            if op not in ["pressed", "released"]:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid operator")
+        elif trigger_sensor == "pir":
+            if op not in ["detected", "not-detected"]:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid operator")
+        elif trigger_sensor == "relay":
+            if op not in ["active", "inactive"]:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid operator")
+        elif trigger_sensor == "servo":
+            if op not in ["OPEN", "HALF_OPEN", "CLOSED"]:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid operator")
+        else:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid operator")
+    if not all(kv.count('=') == 1 for kv in request.get('action', '').split(';') if kv):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid action format. Must be key=value pairs separated by semicolons")
+
 @rules_router.post("/rules")
 def create_rule(request: dict, user=Depends(get_current_user_from_request)):
+    validate_rule(request)
     db = SessionLocal()
     rule = Rule(**request)
     db.add(rule)
@@ -46,6 +82,7 @@ def create_rule(request: dict, user=Depends(get_current_user_from_request)):
 
 @rules_router.put("/rules/{rule_id}")
 def update_rule(rule_id: int, request: dict, user=Depends(get_current_user_from_request)):
+    validate_rule(request)
     db = SessionLocal()
     rule = db.query(Rule).filter(Rule.id == rule_id).first()
     if not rule:
