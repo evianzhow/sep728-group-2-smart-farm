@@ -1,8 +1,8 @@
 <template>
-  <div class="button-status">
+  <div class="button-status" :class="{ active: isActive }">
     <h3>{{ label }}</h3>
     <div class="status-container">
-      <span>{{ new Date(lastUpdatedTime).toLocaleString([], { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }) }}</span>
+      <span>{{ lastUpdatedTimeString }}</span>
       <span>{{ status }}</span>
     </div>
   </div>
@@ -40,6 +40,15 @@ export default {
     status() {
       return this.states[this.currentIndex];
     },
+    isActive() {
+      return this.currentIndex === 0;
+    },
+    lastUpdatedTimeString() {
+      if (!this.lastUpdatedTime) {
+        return "N/A";
+      }
+      return new Date(this.lastUpdatedTime).toLocaleString([], { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    },
   },
   methods: {
     // Fetch data dynamically based on label
@@ -66,12 +75,12 @@ export default {
           // Update the current index based on the response
           if (this.label === "PIR") {
             this.currentIndex =
-              response.data.value === "inactivated" || response.data.value === false
+              response.data.value === false
                 ? 1
                 : 0; // Activated/Inactivated
           } else if (this.label === "Button") {
             this.currentIndex =
-              response.data.pressed === "releaseds" || response.data.pressed === false
+              response.data.pressed === false
                 ? 1
                 : 0; // Pressed/Released
           }
@@ -111,6 +120,11 @@ export default {
   width: 150px;
   height: 150px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease; /* Smooth transition for color change */
+}
+
+.button-status.active {
+  background-color: #4caf50; /* Green color for active state */
 }
 
 .status-container {
