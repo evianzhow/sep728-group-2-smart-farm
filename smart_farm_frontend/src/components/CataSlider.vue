@@ -24,6 +24,7 @@ export default {
   },
   data() {
     return {
+      intervalId: null,
       states: ["OPEN", "HALF_OPEN", "CLOSED"], // Available states
       currentIndex: 0, // Default state is "OPEN"
     };
@@ -73,7 +74,12 @@ export default {
     },
   },
   async mounted() {
-    this.fetchData();
+    this.intervalId = setInterval(() => {
+      this.fetchData();
+    }, 5000);
+  },
+  unmounted() {
+    clearInterval(this.intervalId);
   },
 };
 </script>

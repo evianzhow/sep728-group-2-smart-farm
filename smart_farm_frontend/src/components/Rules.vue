@@ -207,11 +207,11 @@ export default {
         },
         Relay: {
           "Active(ON)": "active",
-          "Active(OFF)": "inactive",
+          "Inactive(OFF)": "inactive",
         },
         LED: {
           "Active(ON)": "active",
-          "Active(OFF)": "inactive",
+          "Inactive(OFF)": "inactive",
         },
         Servo: {
           "OPEN": "OPEN",
@@ -290,14 +290,14 @@ export default {
         OperateRelay: (action) => {
           const percentageMap = {
             "Active(ON)": "active=true",
-            "Active(OFF)": "active=false"
+            "Inactive(OFF)": "active=false"
           };
           return percentageMap[action] || {}; // Fallback if no match
         },
         OperateLED: (action) => {
           const percentageMap = {
             "Active(ON)": "active=true",
-            "Active(OFF)": "active=false"
+            "Inactive(OFF)": "active=false"
           };
           return percentageMap[action] || {}; // Fallback if no match
         },
@@ -436,7 +436,7 @@ export default {
             break;
           case "Relay":
           case "LED":
-            this.operators = ["Active(ON)", "Active(OFF)"];
+            this.operators = ["Active(ON)", "Inactive(OFF)"];
             break;
           case "Servo":
             this.operators = ["OPEN", "HALF_OPEN", "CLOSED"];

@@ -31,6 +31,7 @@ export default {
   },
   data() {
     return {
+      intervalId: null,
       currentStep: 0,
       steps: [
         { value: 0, label: '0%', speed: 0 },
@@ -83,7 +84,12 @@ export default {
     },
   },
   async mounted() {
-    this.fetchData();
+    this.intervalId = setInterval(() => {
+      this.fetchData();
+    }, 5000);
+  },
+  unmounted() {
+    clearInterval(this.intervalId);
   },
 };
 </script>

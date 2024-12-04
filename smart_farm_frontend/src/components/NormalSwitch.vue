@@ -22,6 +22,7 @@ export default {
   },
   data() {
     return {
+      intervalId: null,
       isOn: false, // Default state is OFF
     };
   },
@@ -65,16 +66,29 @@ export default {
     },
     async fetchData() {
       const token = await this.getAuthToken();
-      const response = await axios.get(`https://gorgeous-glowworm-definite.ngrok-free.app/controllers/${this.label}/preview`, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      this.isOn = response.data.active;
+      let endpoint = "";
+      if (this.label === "LED") {
+        endpoint = `https://gorgeous-glowworm-definite.ngrok-free.app/controllers/led/preview`;
+      } else if (this.label === "Relay Module") {
+        endpoint = `https://gorgeous-glowworm-definite.ngrok-free.app/controllers/relay/preview`;
+      }
+      if (endpoint) {
+        const response = await axios.get(endpoint, {
+          headers: {
+            Authorization: token,
+          },
+        });
+        this.isOn = response.data.active;
+      }
     },
   },
-  async mounted() {
-    this.fetchData();
+  async mounted() { 
+    this.intervalId = setInterval(() => {
+      this.fetchData();
+    }, 5000);
+  },
+  unmounted() {
+    clearInterval(this.intervalId);
   },
 };
 </script>
