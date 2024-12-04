@@ -48,7 +48,7 @@
         :series="steamChartSeries"
       />
       <apexchart
-        v-if="title === 'SOILHUMADITY'"
+        v-if="title === 'SOILHUMIDITY'"
         ref="soilChart"
         type="line"
         :options="soilChartOptions"
@@ -91,12 +91,12 @@ export default {
     return {
       // Static data for each sensor
       sensorData: {
-        HUMIDITY: [0.2, 0, 0, 0, 0, 0, 0, 0, 0, 0], //Done ^^^
+        HUMIDITY: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //Done ^^^
         ILLUMINATION: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //Done
         TEMPERATURE: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //Done
         STEAM: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//Done
         DEWPOINT: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // Done
-        SOILHUMADITY: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        SOILHUMIDITY: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         WATERLEVEL: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//Done
         ULTRASONIC: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],//Done ^^^
         PHOTORESISTOE: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // No need to handle this one
@@ -308,8 +308,8 @@ export default {
         }));
 
         // Assign data to the appropriate sensor array
-        this.SOILHUMADITY = historyData;
-        console.log("SOIL HUMIDITY Data:", this.SOILHUMADITY);
+        this.SOILHUMIDITY = historyData;
+        console.log("SOIL HUMIDITY Data:", this.SOILHUMIDITY);
         this.updateSoilChartData(); // Update chart with new data
       } catch (error) {
         console.error("Error fetching soil humidity history:", error);
@@ -524,8 +524,8 @@ export default {
       this.forceRefreshChart(this.$refs.humidityChart, this.humidityChartSeries, this.humidityChartOptions);
     },
     updateSoilChartData() {
-      const dataArray = this.SOILHUMADITY.map((item) => parseFloat(item.percentage || 0));
-      const timeArray = this.SOILHUMADITY.map((item) =>
+      const dataArray = this.SOILHUMIDITY.map((item) => parseFloat(item.percentage || 0));
+      const timeArray = this.SOILHUMIDITY.map((item) =>
         new Date(item.timestamp).toLocaleTimeString() || "Invalid Date"
       );
 
@@ -615,14 +615,23 @@ export default {
 
   mounted() {
     // Fetch historical data for Illumination and Dew Point
-    this.fetchLightHistory();
-    this.fetchDewPointHistory();
-    this.fetchTemperatureHistory();
-    this.fetchHumidityHistory();
-    this.fetchWaterHistory();
-    this.fetchSteamHistory();
-    this.fetchUltrasonicHistory();
-    this.fetchSoilHistory();
+    if (this.title === "ILLUMINATION") {  
+      this.fetchLightHistory();
+    } else if (this.title === "DEWPOINT") {
+      this.fetchDewPointHistory();
+    } else if (this.title === "TEMPERATURE") {
+      this.fetchTemperatureHistory();
+    } else if (this.title === "HUMIDITY") {
+      this.fetchHumidityHistory();
+    } else if (this.title === "WATERLEVEL") {
+      this.fetchWaterHistory();
+    } else if (this.title === "STEAM") {
+      this.fetchSteamHistory();
+    } else if (this.title === "ULTRASONIC") {
+      this.fetchUltrasonicHistory();
+    } else if (this.title === "SOILHUMIDITY") {
+      this.fetchSoilHistory();
+    }
   },
 };
 </script>

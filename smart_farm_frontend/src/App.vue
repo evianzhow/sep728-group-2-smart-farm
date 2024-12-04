@@ -1,6 +1,3 @@
-<!-- cd smart_farm_frontend-->
-<!-- npm run serve -->
-<!---& "C:\Program Files\Google\Chrome\Application\chrome.exe" --disable-web-security --user-data-dir="C:\chrome-dev-disabled-cors"-->
 <template>
   <div id="app">
     
@@ -74,27 +71,6 @@ export default {
         console.log("No token in memory, fetching a new one...");
         await this.fetchAuthToken();
         return;
-      }
-
-      try {
-        // Validate the token by making a test API call
-        const testResponse = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/light/preview",
-          {
-            headers: {
-              Authorization: this.authToken,
-            },
-          }
-        );
-        console.log("Token is valid:", testResponse.data);
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          // If the token is invalid, fetch a new one
-          console.log("Token expired, fetching a new one...");
-          await this.fetchAuthToken();
-        } else {
-          console.error("Unexpected error when validating token:", error);
-        }
       }
     },
   },

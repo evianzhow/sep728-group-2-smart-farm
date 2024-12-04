@@ -34,11 +34,11 @@
           color="red" 
           @dblclick="navigateToDetails('DEWPOINT')"/>
         <SensorCard 
-          title="SOILHUMADITY" 
-          :value="soilHumadityValue + ' %'" 
+          title="SOILHUMIDITY" 
+          :value="soilHumidityValue + ' %'" 
           icon="🌱" 
           color="orange" 
-          @dblclick="navigateToDetails('SOILHUMADITY')"/>
+          @dblclick="navigateToDetails('SOILHUMIDITY')"/>
         <SensorCard 
           title="WATERLEVEL" 
           :value="WaternValue + ' mm'" 
@@ -51,13 +51,13 @@
           icon="🔊" 
           color="red" 
           @dblclick="navigateToDetails('ULTRASONIC')"/>
-        <SensorCard 
+        <!-- <SensorCard 
           title="PHOTORESISTOE" 
           value="Hardware Inavailable" 
           icon="📷" 
           color="orange" 
           @dblclick="handleUnavailableComponent" 
-          />
+          /> -->
       </div>
 
       <p>Controllers:</p>
@@ -120,7 +120,7 @@
       temperatureValue3: "Loading...",
       humidityValue: "Loading...",
       dewPointValue: "Loading...",
-      soilHumadityValue: "Loading...",
+      soilHumidityValue: "Loading...",
     };
   },
     methods: {
@@ -156,8 +156,8 @@
         this.$router.push({ name: 'FanDetails' });
       },
     //---------------Here to use API------------------------------
-    //Soil humadity
-    async fetchSoilHumadityValue() {
+    //Soil humidity
+    async fetchSoilHumidityValue() {
       try {
         const token = await this.getAuthToken(); 
         console.log("Token being used:", token); 
@@ -170,10 +170,10 @@
           }
         );
         console.log("Response data:", response.data);
-        this.soilHumadityValue = response.data.percentage; 
+        this.soilHumidityValue = response.data.percentage; 
       } catch (error) {
         console.error("Error fetching soil humidity data:", error); 
-        this.soilHumadityValue = "Error";
+        this.soilHumidityValue = "Error";
       }
     },
     //Dew Point
@@ -232,16 +232,16 @@
         console.log("Response data:", response.data);
         this.illuminationValue = response.data.percentage; 
       } catch (error) {
-                                if (error.response) {
-                              console.error("Error response from server:", error.response.data);
-                              this.illuminationValue = "Server Error"; 
-                            } else if (error.request) {
-                              console.error("No response received from server:", error.request);
-                              this.illuminationValue = "Connection Error"; 
-                            } else {
-                              console.error("Unexpected error:", error.message);
-                              this.illuminationValue = "Unexpected Error"; 
-                            } 
+        if (error.response) {
+          console.error("Error response from server:", error.response.data);
+          this.illuminationValue = "Server Error"; 
+        } else if (error.request) {
+          console.error("No response received from server:", error.request);
+          this.illuminationValue = "Connection Error"; 
+        } else {
+          console.error("Unexpected error:", error.message);
+          this.illuminationValue = "Unexpected Error"; 
+        }
         this.illuminationValue = "Error";
       }
     },
@@ -331,7 +331,7 @@
         await this.fetchTemperatureValue();
         await this.fetchHumidityValue();
         await this.fetchDewPointValue();
-        await this.fetchSoilHumadityValue();
+        await this.fetchSoilHumidityValue();
       },
   };
 

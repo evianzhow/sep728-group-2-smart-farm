@@ -2,7 +2,7 @@
   <div class="button-status">
     <h3>{{ label }}</h3>
     <div class="status-container">
-      <span>{{ currentTime }}</span>
+      <span>{{ lastUpdatedTime }}</span>
       <span>{{ status }}</span>
     </div>
   </div>
@@ -22,7 +22,8 @@ export default {
   inject: ["getAuthToken"],
   data() {
     return {
-      currentTime: new Date().toLocaleTimeString(), // Local time
+      intervalId: null, // Add this to store the interval ID
+      lastUpdatedTime: null,
       stateMap: {
         Button: ["Pressed", "Released"], // States for Button
         PIR: ["Activated", "Inactivated"], // States for PIR
@@ -74,6 +75,8 @@ export default {
                 ? 1
                 : 0; // Pressed/Released
           }
+          // response.data.timestamp is should like "2024-12-03T21:46:18.000Z"
+          this.lastUpdatedTime = new Date(response.data.timestamp).toLocaleTimeString();
         } else {
           console.error("No endpoint configured for label:", this.label);
         }
@@ -83,15 +86,14 @@ export default {
     },
   },
   mounted() {
-    // Update the current time every second
-    setInterval(() => {
-      this.currentTime = new Date().toLocaleTimeString();
-    }, 5000);
-
     // Fetch data every 5 seconds
-    setInterval(() => {
+    this.intervalId = setInterval(() => {
       this.fetchData();
     }, 5000);
+  },
+  unmounted() {
+    // Clear the interval when the component is unmounted
+    clearInterval(this.intervalId);
   },
 };
 </script>
