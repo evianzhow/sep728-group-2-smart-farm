@@ -20,17 +20,17 @@ This codebase contains three parts:
    - Download all the libraries from official wiki and add them to Arduino IDE.
    - In Arduino IDE, install external libraries: `PubSubClient`, `ezButton`, `ArduinoJson`.
    - In order to compile the project, create a file named `WifiCredentials.h` under `esp32/sketch_nov13a/` folder and add the following content:
-     ```cpp
-    // WiFi Configuration
-    const char* ssid = "your_wifi_ssid";
-    const char* pwd = "your_wifi_password";
-     ```
+```cpp
+// WiFi Configuration
+const char* ssid = "your_wifi_ssid";
+const char* pwd = "your_wifi_password";
+```
 2. Run the backend software under `smart_farm_backend/` folder.
    - Create a `.env` file and add the following content:
-     ```
-     MQTT_USERNAME=<your_mqtt_username>
-     MQTT_PASSWORD=<your_mqtt_password>
-     ```
+```
+MQTT_USERNAME=<your_mqtt_username>
+MQTT_PASSWORD=<your_mqtt_password>
+```   
    - Modify the `MQTT_BROKER` and `MQTT_PORT` in `app/config.py` with the current MQTT broker you are using.
    - Then, run it up with `docker compose up --build` to start the services. Service will be available at `http://<host>:8000`.
 3. Run the frontend software under `smart_farm_frontend/` folder.
