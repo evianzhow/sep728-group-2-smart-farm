@@ -48,7 +48,7 @@
       // Make the API request
       try {
         await axios.post(
-          `${this.apiEndpoint}/${endpoint}`,
+          `${this.apiEndpoint}${endpoint}`,
           params,
           {
             headers: {

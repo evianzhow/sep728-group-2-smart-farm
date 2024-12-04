@@ -175,7 +175,7 @@ export default {
         SoilPercentage: "soil.percentage",
         WaterValue: "water.value",
         WaterPercentage: "water.percentage",
-        UltrasonicDistance: "ultrasonic.distance",
+        UltrasonicDistance: "ultrasonic.value",
         LightValue: "light.value",
         LightPercentage: "light.percentage",
         Button: "button",
