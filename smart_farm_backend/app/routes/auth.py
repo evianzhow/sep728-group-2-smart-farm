@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request, Depends
 from fastapi.security import HTTPBasic
 from app.database import SessionLocal
-from app.models import User
+from app.models import User, get_db
 from app.utils import verify_password, create_session_token
 auth_router = APIRouter()
 security = HTTPBasic()
@@ -38,7 +38,10 @@ def get_current_user_from_request(request: Request):
     token = request.headers.get("Authorization")
     if not token:
         raise HTTPException(status_code=401, detail="Missing token")
-    return username_to_user(get_current_username_from_token(token))
+    # FIXME: Eliminate the need to query the database for the username
+    # return username_to_user(get_current_username_from_token(token))
+    return get_current_username_from_token(token)
+
 
 @auth_router.post("/login")
 def login(credentials: dict):
@@ -61,6 +64,6 @@ def logout(request: Request):
     return {"message": "Successfully logged out"}
 
 @auth_router.get("/ping")
-def ping(user=Depends(get_current_user_from_request)):
+def ping(_=Depends(get_current_user_from_request)):
     return {"message": "pong"}
 

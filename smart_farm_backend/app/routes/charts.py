@@ -5,6 +5,9 @@ from .auth import get_current_user_from_request
 from .sensors import get_sensor_history_all
 from itertools import groupby
 from fastapi import HTTPException
+from app.models import get_db
+from sqlalchemy.orm import Session
+
 charts_router = APIRouter()
 
 def convert_to_milliseconds(dt: datetime) -> int:
@@ -62,11 +65,12 @@ def bin_sensor_data(items, getter_func, interval: str = "hour"):
 async def get_light_chart_data(start_time: str | None = Query(None), 
                                  end_time: str | None = Query(None), 
                                  interval: str = Query("hour"), 
-                                 user=Depends(get_current_user_from_request)):
+                                 db: Session = Depends(get_db),
+                                 _=Depends(get_current_user_from_request)):
     if interval not in ["minute", "hour", "day"]:
         raise HTTPException(status_code=400, detail="Invalid interval")
     
-    items = get_sensor_history_all(Photoresistor, start_time, end_time)
+    items = get_sensor_history_all(db, Photoresistor, start_time, end_time)
     binned_values = bin_sensor_data(items, lambda x: x.value, interval)
     binned_percentages = bin_sensor_data(items, lambda x: x.percentage, interval)
 
@@ -90,11 +94,12 @@ async def get_light_chart_data(start_time: str | None = Query(None),
 async def get_water_chart_data(start_time: str | None = Query(None),
                                  end_time: str | None = Query(None), 
                                  interval: str = Query("hour"), 
-                                 user=Depends(get_current_user_from_request)):
+                                 db: Session = Depends(get_db),
+                                 _=Depends(get_current_user_from_request)):
     if interval not in ["minute", "hour", "day"]:
         raise HTTPException(status_code=400, detail="Invalid interval")
     
-    items = get_sensor_history_all(WaterLevel, start_time, end_time)
+    items = get_sensor_history_all(db, WaterLevel, start_time, end_time)
     binned_values = bin_sensor_data(items, lambda x: x.value, interval)
     binned_percentages = bin_sensor_data(items, lambda x: x.percentage, interval)
 
@@ -118,11 +123,12 @@ async def get_water_chart_data(start_time: str | None = Query(None),
 async def get_steam_chart_data(start_time: str | None = Query(None), 
                                  end_time: str | None = Query(None), 
                                  interval: str = Query("hour"), 
-                                 user=Depends(get_current_user_from_request)):
+                                 db: Session = Depends(get_db),
+                                 _=Depends(get_current_user_from_request)):
     if interval not in ["minute", "hour", "day"]:
         raise HTTPException(status_code=400, detail="Invalid interval")
 
-    items = get_sensor_history_all(Steam, start_time, end_time)
+    items = get_sensor_history_all(db, Steam, start_time, end_time)
     binned_values = bin_sensor_data(items, lambda x: x.value, interval)
     binned_percentages = bin_sensor_data(items, lambda x: x.percentage, interval)
 
@@ -146,11 +152,12 @@ async def get_steam_chart_data(start_time: str | None = Query(None),
 async def get_ultrasonic_chart_data(start_time: str | None = Query(None), 
                                       end_time: str | None = Query(None), 
                                       interval: str = Query("hour"), 
-                                      user=Depends(get_current_user_from_request)):
+                                      db: Session = Depends(get_db),
+                                      _=Depends(get_current_user_from_request)):
     if interval not in ["minute", "hour", "day"]:
         raise HTTPException(status_code=400, detail="Invalid interval")
     
-    items = get_sensor_history_all(Ultrasonic, start_time, end_time)
+    items = get_sensor_history_all(db, Ultrasonic, start_time, end_time)
     binned_values = bin_sensor_data(items, lambda x: x.value, interval)
 
     # Convert start_time and end_time to milliseconds for metadata
@@ -178,13 +185,14 @@ async def get_dht11_temperature_chart_data(start_time: str | None = Query(None),
                                            end_time: str | None = Query(None), 
                                            interval: str = Query("hour"), 
                                            unit: str = Query("celsius"), 
-                                           user=Depends(get_current_user_from_request)):
+                                           db: Session = Depends(get_db),
+                                           _=Depends(get_current_user_from_request)):
     if interval not in ["minute", "hour", "day"]:
         raise HTTPException(status_code=400, detail="Invalid interval")
     if unit not in ["celsius", "fahrenheit", "kelvin"]:
         raise HTTPException(status_code=400, detail="Invalid unit")
     
-    items = get_sensor_history_all(Temperature, start_time, end_time)
+    items = get_sensor_history_all(db, Temperature, start_time, end_time)
     binned_values = bin_sensor_data(items, lambda x: getattr(x, unit), interval)
 
     # Convert start_time and end_time to milliseconds for metadata
@@ -212,11 +220,12 @@ async def get_dht11_temperature_chart_data(start_time: str | None = Query(None),
 async def get_dht11_humidity_chart_data(start_time: str | None = Query(None), 
                                           end_time: str | None = Query(None), 
                                           interval: str = Query("hour"), 
-                                          user=Depends(get_current_user_from_request)):
+                                          db: Session = Depends(get_db),
+                                          _=Depends(get_current_user_from_request)):
     if interval not in ["minute", "hour", "day"]:
         raise HTTPException(status_code=400, detail="Invalid interval")
     
-    items = get_sensor_history_all(Humidity, start_time, end_time)
+    items = get_sensor_history_all(db, Humidity, start_time, end_time)
     binned_values = bin_sensor_data(items, lambda x: x.value, interval)
 
     # Convert start_time and end_time to milliseconds for metadata
@@ -243,11 +252,12 @@ async def get_dht11_humidity_chart_data(start_time: str | None = Query(None),
 async def get_dht11_dewpoint_chart_data(start_time: str | None = Query(None), 
                                           end_time: str | None = Query(None), 
                                           interval: str = Query("hour"), 
-                                          user=Depends(get_current_user_from_request)):
+                                          db: Session = Depends(get_db),
+                                          _=Depends(get_current_user_from_request)):
     if interval not in ["minute", "hour", "day"]:
         raise HTTPException(status_code=400, detail="Invalid interval")
     
-    items = get_sensor_history_all(DewPoint, start_time, end_time)
+    items = get_sensor_history_all(db, DewPoint, start_time, end_time)
     binned_values = bin_sensor_data(items, lambda x: x.celsius, interval)
 
     # Convert start_time and end_time to milliseconds for metadata
@@ -274,11 +284,12 @@ async def get_dht11_dewpoint_chart_data(start_time: str | None = Query(None),
 async def get_soil_chart_data(start_time: str | None = Query(None), 
                                 end_time: str | None = Query(None), 
                                 interval: str = Query("hour"), 
-                                user=Depends(get_current_user_from_request)):
+                                db: Session = Depends(get_db),  
+                                _=Depends(get_current_user_from_request)):
     if interval not in ["minute", "hour", "day"]:
         raise HTTPException(status_code=400, detail="Invalid interval")
     
-    items = get_sensor_history_all(SoilHumidity, start_time, end_time)
+    items = get_sensor_history_all(db, SoilHumidity, start_time, end_time)
     binned_values = bin_sensor_data(items, lambda x: x.value, interval)
     binned_percentages = bin_sensor_data(items, lambda x: x.percentage, interval)
 

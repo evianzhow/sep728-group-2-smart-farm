@@ -3,6 +3,14 @@ from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, Foreig
 from sqlalchemy.ext.declarative import declared_attr
 from app.database import Base
 from sqlalchemy.orm import relationship
+from app.database import SessionLocal
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 class SensorDataBase(Base):
     __abstract__ = True

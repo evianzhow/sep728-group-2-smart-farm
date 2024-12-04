@@ -9,7 +9,7 @@ controllers_router = APIRouter()
 mqtt_client = MQTTClientSingleton()
 
 @controllers_router.post("/controllers/buzzer")
-def set_buzzer_state(request: dict, user=Depends(get_current_user_from_request)):
+def set_buzzer_state(request: dict, _=Depends(get_current_user_from_request)):
     frequency = request.get("frequency")
     duration = request.get("duration")
     if not frequency or not duration:
@@ -18,7 +18,7 @@ def set_buzzer_state(request: dict, user=Depends(get_current_user_from_request))
     return {"message": "Buzzer state set"}
 
 @controllers_router.post("/controllers/relay")
-def set_relay_state(request: dict, user=Depends(get_current_user_from_request)):
+def set_relay_state(request: dict, _=Depends(get_current_user_from_request)):
     state = request.get("active")
     if state is None:
         raise HTTPException(status_code=400, detail="Missing active")
@@ -26,7 +26,7 @@ def set_relay_state(request: dict, user=Depends(get_current_user_from_request)):
     return {"message": "Relay state set"}   
 
 @controllers_router.post("/controllers/led")
-def set_led_state(request: dict, user=Depends(get_current_user_from_request)):
+def set_led_state(request: dict, _=Depends(get_current_user_from_request)):
     state = request.get("active")
     if state is None:
         raise HTTPException(status_code=400, detail="Missing active")
@@ -34,7 +34,7 @@ def set_led_state(request: dict, user=Depends(get_current_user_from_request)):
     return {"message": "LED state set"}
 
 @controllers_router.post("/controllers/servo")
-def set_servo_state(request: dict, user=Depends(get_current_user_from_request)):
+def set_servo_state(request: dict, _=Depends(get_current_user_from_request)):
     if "angle" in request:
         angle = request.get("angle")
         publish_servo_angle(angle)
@@ -46,7 +46,7 @@ def set_servo_state(request: dict, user=Depends(get_current_user_from_request)):
     return {"message": "Servo state set"}
 
 @controllers_router.post("/controllers/fan")
-def set_fan_speed(request: dict, user=Depends(get_current_user_from_request)):
+def set_fan_speed(request: dict, _=Depends(get_current_user_from_request)):
     speed = request.get("speed")
     if speed is None:
         raise HTTPException(status_code=400, detail="Missing speed")
@@ -54,7 +54,7 @@ def set_fan_speed(request: dict, user=Depends(get_current_user_from_request)):
     return {"message": "Fan speed set"}
 
 @controllers_router.post("/controllers/lcd")
-def set_lcd_state(request: dict, user=Depends(get_current_user_from_request)):
+def set_lcd_state(request: dict, _=Depends(get_current_user_from_request)):
     message = request.get("message")
     duration = request.get("duration")
     if message is None or duration is None:

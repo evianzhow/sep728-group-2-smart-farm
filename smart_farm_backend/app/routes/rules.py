@@ -3,12 +3,13 @@ from app.database import SessionLocal
 from app.models import Rule, EventLog
 from .auth import get_current_user_from_request
 from app.utils import convert_datetime_to_iso8601
+from app.models import get_db
+from sqlalchemy.orm import Session
 
 rules_router = APIRouter()
 
 @rules_router.get("/rules")
-def get_rules(page: int = Query(default=1, ge=1), per_page: int = Query(default=25, ge=1), user=Depends(get_current_user_from_request)):
-    db = SessionLocal()
+def get_rules(page: int = Query(default=1, ge=1), per_page: int = Query(default=25, ge=1), db: Session = Depends(get_db), _=Depends(get_current_user_from_request)):
     rules = db.query(Rule).offset((page - 1) * per_page).limit(per_page).all()
 
     for rule in rules:
@@ -28,8 +29,7 @@ def get_rules(page: int = Query(default=1, ge=1), per_page: int = Query(default=
     }
 
 @rules_router.get("/rules/{rule_id}")
-def get_rule(rule_id: int, user=Depends(get_current_user_from_request)):
-    db = SessionLocal()
+def get_rule(rule_id: int, db: Session = Depends(get_db), _=Depends(get_current_user_from_request)):
     rule = db.query(Rule).filter(Rule.id == rule_id).first()
     if rule is not None:
         rule.created_at = convert_datetime_to_iso8601(rule.created_at)
@@ -77,9 +77,8 @@ def validate_rule(request: dict):
     return {**request, "trigger_sensor": trigger_sensor, "type": type, "op": op, "target_controller": target_controller, "action": action}
 
 @rules_router.post("/rules")
-def create_rule(request: dict, user=Depends(get_current_user_from_request)):
+def create_rule(request: dict, db: Session = Depends(get_db), _=Depends(get_current_user_from_request)):
     validated_request = validate_rule(request)
-    db = SessionLocal()
     rule = Rule(**validated_request)
     db.add(rule)
     db.commit()
@@ -87,9 +86,8 @@ def create_rule(request: dict, user=Depends(get_current_user_from_request)):
     return rule
 
 @rules_router.put("/rules/{rule_id}")
-def update_rule(rule_id: int, request: dict, user=Depends(get_current_user_from_request)):
+def update_rule(rule_id: int, request: dict, db: Session = Depends(get_db), _=Depends(get_current_user_from_request)):
     validated_request = validate_rule(request)
-    db = SessionLocal()
     rule = db.query(Rule).filter(Rule.id == rule_id).first()
     if not rule:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rule not found")
@@ -101,8 +99,7 @@ def update_rule(rule_id: int, request: dict, user=Depends(get_current_user_from_
     return rule
 
 @rules_router.delete("/rules/{rule_id}")
-def delete_rule(rule_id: int, user=Depends(get_current_user_from_request)):
-    db = SessionLocal()
+def delete_rule(rule_id: int, db: Session = Depends(get_db), _=Depends(get_current_user_from_request)):
     db.query(EventLog).filter(EventLog.rule_id == rule_id).delete()
     db.query(Rule).filter(Rule.id == rule_id).delete()
     db.commit()
