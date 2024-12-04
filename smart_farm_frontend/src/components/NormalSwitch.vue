@@ -12,7 +12,7 @@
 import axios from "axios";
 
 export default {
-  inject: ["getAuthToken"],
+  inject: ["getAuthToken", "apiEndpoint"],
   name: "ToggleSwitch",
   props: {
     label: {
@@ -44,9 +44,9 @@ export default {
       // Determine API endpoint based on the label
       let endpoint = "";
       if (this.label === "LED") {
-        endpoint = "https://gorgeous-glowworm-definite.ngrok-free.app/controllers/led";
+        endpoint = `${this.apiEndpoint}/controllers/led`;
       } else if (this.label === "Relay Module") {
-        endpoint = "https://gorgeous-glowworm-definite.ngrok-free.app/controllers/relay";
+        endpoint = `${this.apiEndpoint}/controllers/relay`;
       } else {
         console.error("Unknown device type:", this.label);
         return;
@@ -68,9 +68,9 @@ export default {
       const token = await this.getAuthToken();
       let endpoint = "";
       if (this.label === "LED") {
-        endpoint = `https://gorgeous-glowworm-definite.ngrok-free.app/controllers/led/preview`;
+        endpoint = `${this.apiEndpoint}/controllers/led/preview`;
       } else if (this.label === "Relay Module") {
-        endpoint = `https://gorgeous-glowworm-definite.ngrok-free.app/controllers/relay/preview`;
+        endpoint = `${this.apiEndpoint}/controllers/relay/preview`;
       }
       if (endpoint) {
         const response = await axios.get(endpoint, {

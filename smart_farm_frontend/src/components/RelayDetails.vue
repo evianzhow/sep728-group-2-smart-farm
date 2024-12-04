@@ -25,7 +25,7 @@ import axios from "axios";
 
 export default {
   name: "RelayDetails",
-  inject: ["getAuthToken"],
+  inject: ["getAuthToken", "apiEndpoint"],
   data() {
     return {
       history: [], // To store the relay history data
@@ -36,7 +36,7 @@ export default {
       try {
         const token = await this.getAuthToken(); // Ensure you have a valid token
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/controllers/relay/history",
+          `${this.apiEndpoint}/controllers/relay/history`,
           {
             headers: { Authorization: token },
             params: {

@@ -26,7 +26,7 @@
 import axios from "axios";
 
 export default {
-    inject: ["getAuthToken"],
+    inject: ["getAuthToken", "apiEndpoint"],
   name: "ServoDetails",
   data() {
     return {
@@ -38,7 +38,7 @@ export default {
       try {
         const token = await this.getAuthToken(); // Ensure you have a valid token
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/controllers/servo/history",
+          `${this.apiEndpoint}/controllers/servo/history`,
           {
             headers: { Authorization: token },
             params: {

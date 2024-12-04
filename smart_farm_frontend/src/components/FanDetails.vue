@@ -24,7 +24,7 @@
 import axios from "axios";
 
 export default {
-  inject: ["getAuthToken"],
+  inject: ["getAuthToken", "apiEndpoint"],
   name: "FanDetails",
   data() {
     return {
@@ -36,7 +36,7 @@ export default {
       try {
         const token = await this.getAuthToken(); // Ensure you have a valid token
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/controllers/fan/history",
+          `${this.apiEndpoint}/controllers/fan/history`,
           {
             headers: { Authorization: token },
             params: {

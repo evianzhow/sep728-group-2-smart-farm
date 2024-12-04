@@ -14,7 +14,7 @@
 import axios from "axios";
 
 export default {
-  inject: ["getAuthToken"],
+  inject: ["getAuthToken", "apiEndpoint"],
   name: "CataSlider",
   props: {
     label: {
@@ -44,7 +44,7 @@ export default {
 
       try {
         await axios.post(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/controllers/servo",
+          `${this.apiEndpoint}/controllers/servo`,
           params,
           {
             headers: {
@@ -65,7 +65,7 @@ export default {
         "CLOSED": 2,
       };
       const token = await this.getAuthToken();
-      const response = await axios.get("https://gorgeous-glowworm-definite.ngrok-free.app/controllers/servo/preview", {
+      const response = await axios.get(`${this.apiEndpoint}/controllers/servo/preview`, {
         headers: {
           Authorization: token,
         },

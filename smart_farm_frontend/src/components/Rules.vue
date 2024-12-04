@@ -141,7 +141,7 @@
 import axios from "axios";
 export default {
   name: "Rules",
-  inject: ["getAuthToken"],
+  inject: ["getAuthToken", "apiEndpoint"],
   data() {
     return {
       newRule: {
@@ -325,7 +325,7 @@ export default {
       try {
         const token = localStorage.getItem("authToken"); // Retrieve token from local storage
         const response = await axios.post(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/rules",
+          `${this.apiEndpoint}/rules`,
           ruleData,
           {
             headers: {
@@ -348,7 +348,7 @@ export default {
       try {
         const token = localStorage.getItem("authToken"); // Retrieve the stored token
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/rules",
+          `${this.apiEndpoint}/rules`,
           {
             headers: {
               Authorization: token, // Include token in headers
@@ -376,7 +376,7 @@ export default {
 
         // Send DELETE request to the API
         await axios.delete(
-          `https://gorgeous-glowworm-definite.ngrok-free.app/rules/${ruleId}`,
+          `${this.apiEndpoint}/rules/${ruleId}`,
           {
             headers: {
               Authorization: token, // Include token in headers

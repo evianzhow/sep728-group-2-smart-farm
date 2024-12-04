@@ -10,7 +10,7 @@
   import axios from "axios";
   
   export default {
-    inject: ["getAuthToken"],
+    inject: ["getAuthToken", "apiEndpoint"],
     name: "ToggleSwitch",
     props: {
       label: {
@@ -48,7 +48,7 @@
       // Make the API request
       try {
         await axios.post(
-          `https://gorgeous-glowworm-definite.ngrok-free.app${endpoint}`,
+          `${this.apiEndpoint}/${endpoint}`,
           params,
           {
             headers: {

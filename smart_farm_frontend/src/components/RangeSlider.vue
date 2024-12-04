@@ -21,7 +21,7 @@
 import axios from "axios";
 
 export default {
-  inject: ["getAuthToken"],
+  inject: ["getAuthToken", "apiEndpoint"],
   name: "RangeSlider",
   props: {
     label: {
@@ -52,7 +52,7 @@ export default {
 
       try {
         const response = await axios.post(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/controllers/fan",
+          `${this.apiEndpoint}/controllers/fan`,
           payload,
           {
             headers: {
@@ -75,7 +75,7 @@ export default {
         255: 4,
       };
       const token = await this.getAuthToken();
-      const response = await axios.get("https://gorgeous-glowworm-definite.ngrok-free.app/controllers/fan/preview", {
+      const response = await axios.get(`${this.apiEndpoint}/controllers/fan/preview`, {
         headers: {
           Authorization: token,
         },

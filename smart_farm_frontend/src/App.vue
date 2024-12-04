@@ -21,6 +21,7 @@ export default {
   data() {
     return {
       authToken: "", 
+      apiEndpoint: "http://192.168.2.23:8000", // "https://gorgeous-glowworm-definite.ngrok-free.app
     };
   },
   methods: {
@@ -39,6 +40,7 @@ export default {
   provide() {
     return {
       getAuthToken: this.getAuthToken,
+      apiEndpoint: this.apiEndpoint,
     };
   },
 };

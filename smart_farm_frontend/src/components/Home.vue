@@ -107,7 +107,7 @@
       NormalSwitch,
       CataSlider,
     },
-    inject: ["getAuthToken"],
+    inject: ["getAuthToken", "apiEndpoint"],
     data() {
       return {
         intervalId: null, // Add this to store the interval ID
@@ -163,7 +163,7 @@
         const token = await this.getAuthToken(); 
         console.log("Token being used:", token); 
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/soil/preview",
+          `${this.apiEndpoint}/sensors/soil/preview`,
           {
             headers: {
               Authorization: token, 
@@ -183,7 +183,7 @@
         const token = await this.getAuthToken(); 
         console.log("Token being used:", token); 
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/dht11/dewpoint/preview",
+          `${this.apiEndpoint}/sensors/dht11/dewpoint/preview`,
           {
             headers: {
               Authorization: token, 
@@ -203,7 +203,7 @@
         const token = await this.getAuthToken(); 
         console.log("Token being used:", token); 
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/dht11/humidity/preview",
+          `${this.apiEndpoint}/sensors/dht11/humidity/preview`,
           {
             headers: {
               Authorization: token, 
@@ -223,7 +223,7 @@
         const token = await this.getAuthToken(); 
         console.log("Token being used:", token); 
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/light/preview",
+          `${this.apiEndpoint}/sensors/light/preview`,
           {
             headers: {
               Authorization: token, 
@@ -251,7 +251,7 @@
       try {
         const token = await this.getAuthToken(); 
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/water/preview",
+          `${this.apiEndpoint}/sensors/water/preview`,
           {
             headers: {
               Authorization: token, 
@@ -269,7 +269,7 @@
       try {
         const token = await this.getAuthToken(); 
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/steam/preview",
+          `${this.apiEndpoint}/sensors/steam/preview`,
           {
             headers: {
               Authorization: token, 
@@ -287,7 +287,7 @@
       try {
         const token = await this.getAuthToken(); 
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/ultrasonic/preview",
+          `${this.apiEndpoint}/sensors/ultrasonic/preview`,
           {
             headers: {
               Authorization: token, 
@@ -305,7 +305,7 @@
       try {
         const token = await this.getAuthToken(); 
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/dht11/temperature/preview",
+          `${this.apiEndpoint}/sensors/dht11/temperature/preview`,
           {
             headers: {
               Authorization: token, 

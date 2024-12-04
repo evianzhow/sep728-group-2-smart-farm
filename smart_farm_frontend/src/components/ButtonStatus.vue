@@ -19,7 +19,7 @@ export default {
       required: true, // Ensure that label is provided
     },
   },
-  inject: ["getAuthToken"],
+  inject: ["getAuthToken", "apiEndpoint"],
   data() {
     return {
       intervalId: null, // Add this to store the interval ID
@@ -59,9 +59,9 @@ export default {
 
         let endpoint = "";
         if (this.label === "PIR") {
-          endpoint = "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/pir/preview";
+          endpoint = `${this.apiEndpoint}/sensors/pir/preview`;
         } else if (this.label === "Button") {
-          endpoint = "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/button/preview";
+          endpoint = `${this.apiEndpoint}/sensors/button/preview`;
         }
 
         if (endpoint) {

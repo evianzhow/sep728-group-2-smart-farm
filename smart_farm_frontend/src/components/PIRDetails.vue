@@ -24,7 +24,7 @@
 import axios from "axios";
 
 export default {
-  inject: ["getAuthToken"],
+  inject: ["getAuthToken", "apiEndpoint"],
   name: "PIRDetails",
   data() {
     return {
@@ -36,7 +36,7 @@ export default {
       try {
         const token = await this.getAuthToken(); // Ensure you have a valid token
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/pir/history",
+          `${this.apiEndpoint}/sensors/pir/history`,
           {
             headers: { Authorization: token },
             params: {

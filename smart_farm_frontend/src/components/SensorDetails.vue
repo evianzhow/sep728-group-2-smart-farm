@@ -83,7 +83,7 @@ import axios from "axios"; // For HTTP requests
 
 export default {
   name: "SensorDetails", // Component name
-  inject: ["getAuthToken"], // Inject auth token for secure API calls
+  inject: ["getAuthToken", "apiEndpoint"], // Inject auth token for secure API calls
   components: {
     apexchart: VueApexCharts, // Register the ApexCharts component
   },
@@ -264,7 +264,7 @@ export default {
       try {
         const token = await this.getAuthToken(); // Get the auth token
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/dht11/humidity/chart", // API URL
+          `${this.apiEndpoint}/sensors/dht11/humidity/chart`, // API URL
           {
             headers: { Authorization: token }, // Pass token in the header
             params: {
@@ -292,7 +292,7 @@ export default {
       try {
         const token = await this.getAuthToken(); // Get the auth token
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/soil/chart", // API URL
+          `${this.apiEndpoint}/sensors/soil/chart`, // API URL
           {
             headers: { Authorization: token }, // Pass token in the header
             params: {
@@ -320,7 +320,7 @@ export default {
       try {
         const token = await this.getAuthToken(); // Get the auth token
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/steam/chart", // API URL
+          `${this.apiEndpoint}/sensors/steam/chart`, // API URL
           {
             headers: { Authorization: token }, // Pass token in the header
             params: {
@@ -348,7 +348,7 @@ export default {
   try {
     const token = await this.getAuthToken(); // Get the auth token
     const response = await axios.get(
-      "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/light/chart", // API URL
+      `${this.apiEndpoint}/sensors/light/chart`, // API URL
       {
         headers: { Authorization: token }, // Pass token in the header
         params: {
@@ -382,7 +382,7 @@ export default {
       try {
         const token = await this.getAuthToken(); // Get auth token
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/dht11/dewpoint/chart", // API URL for Dew Point
+          `${this.apiEndpoint}/sensors/dht11/dewpoint/chart`, // API URL for Dew Point
           {
             headers: { Authorization: token },
             params: {
@@ -414,7 +414,7 @@ export default {
       try {
         const token = await this.getAuthToken(); // Get the auth token
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/water/chart", // API URL
+          `${this.apiEndpoint}/sensors/water/chart`, // API URL
           {
             headers: { Authorization: token }, // Pass token in the header
             params: {
@@ -442,7 +442,7 @@ export default {
       try {
         const token = await this.getAuthToken(); // Get the auth token
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/ultrasonic/chart", // API URL
+          `${this.apiEndpoint}/sensors/ultrasonic/chart`, // API URL
           {
             headers: { Authorization: token }, // Pass token in the header
             params: {
@@ -470,7 +470,7 @@ export default {
       try {
         const token = await this.getAuthToken(); 
         const response = await axios.get(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/sensors/dht11/temperature/chart", // API URL for Dew Point
+          `${this.apiEndpoint}/sensors/dht11/temperature/chart`, // API URL for Dew Point
           {
             headers: { Authorization: token },
             params: {

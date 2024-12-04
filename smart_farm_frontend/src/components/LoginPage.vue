@@ -27,7 +27,7 @@ import axios from 'axios';
 
 export default {
   name: 'LoginPage',
-  inject: ["getAuthToken"],
+  inject: ["getAuthToken", "apiEndpoint"],
   data() {
     return {
       credentials: {
@@ -44,7 +44,7 @@ export default {
       this.error = null;
 
       try {
-        const response = await axios.post('https://gorgeous-glowworm-definite.ngrok-free.app/login', this.credentials);
+        const response = await axios.post(`${this.apiEndpoint}/login`, this.credentials);
 
         // Assuming the API returns a token
         const token = response.data.token;

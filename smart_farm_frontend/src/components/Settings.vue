@@ -15,7 +15,7 @@ import axios from 'axios';
 
 export default {
   name: "SettingsPage",
-  inject: ["getAuthToken"],
+  inject: ["getAuthToken", "apiEndpoint"],
   data() {
     return {
       showWarning: false, // Flag to control the visibility of the warning message
@@ -35,7 +35,7 @@ export default {
 
       try {
         await axios.post(
-          "https://gorgeous-glowworm-definite.ngrok-free.app/logout",
+          `${this.apiEndpoint}/logout`,
           {
             headers: {
               Authorization: token,
