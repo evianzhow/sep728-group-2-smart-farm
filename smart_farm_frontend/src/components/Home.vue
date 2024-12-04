@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h1>Main Panel</h1>
+      <h1>Smart FarmDashboard</h1>
       <p>Sensors:</p>
       <div class="card-container">
         <SensorCard 

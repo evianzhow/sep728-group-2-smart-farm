@@ -2,7 +2,7 @@
   <div class="sensor-details">
     <h1>{{ title }}</h1>
     <div class="chart-container">
-      <p>Historical Data</p>
+      <p>Historical Data (Latest 24 hours Average)</p>
 
       <!-- Conditional rendering for Illumination -->
       <apexchart
@@ -112,7 +112,7 @@ export default {
           categories: [], 
         },
         title: {
-          text: "",
+          text: "Ultrasonic Distance Historical Data",
           align: "center",
         },
         colors: ["#2d6d92"], 
@@ -128,7 +128,7 @@ export default {
           categories: [], 
         },
         title: {
-          text: "",
+          text: "Water Level Historical Data",
           align: "center",
         },
         colors: ["#2d6d92"], 
@@ -144,7 +144,7 @@ export default {
           categories: [], 
         },
         title: {
-          text: "",
+          text: "Soil Humidity Historical Data",
           align: "center",
         },
         colors: ["#2d6d92"], 
@@ -160,7 +160,7 @@ export default {
           categories: [], 
         },
         title: {
-          text: "",
+          text: "Steam Historical Data",
           align: "center",
         },
         colors: ["#2d6d92"], 
@@ -177,7 +177,7 @@ export default {
           categories: [], // Categories for the x-axis (timestamps)
         },
         title: {
-          text: "",
+          text: "Illumination Historical Data",
           align: "center",
         },
         colors: ["#2d6d92"], // Chart line color for Illumination
@@ -276,7 +276,7 @@ export default {
         );
         const historyData = response.data.data.map((entry) => ({
           timestamp: entry.timestamp,
-          value: (entry.value / 100).toFixed(2), 
+          value: entry.value.toFixed(2), 
         }));
 
         // Assign data to the appropriate sensor array
@@ -304,7 +304,7 @@ export default {
         );
         const historyData = response.data.data.map((entry) => ({
           timestamp: entry.timestamp,
-          value: (entry.value / 100).toFixed(2), 
+          value: entry.value.toFixed(2), 
         }));
 
         // Assign data to the appropriate sensor array
@@ -332,7 +332,7 @@ export default {
         );
         const historyData = response.data.data.map((entry) => ({
           timestamp: entry.timestamp,
-          percentage: (entry.percentage / 100).toFixed(2), // Process percentage data
+          percentage: entry.percentage.toFixed(2), // Process percentage data
         }));
 
         // Assign data to the appropriate sensor array
@@ -362,7 +362,7 @@ export default {
     // Process the response data
     const historyData = response.data.data.map((entry) => ({
       timestamp: new Date(entry.timestamp).toLocaleString(), // Convert Unix timestamp to readable format
-      percentage: (entry.percentage / 100).toFixed(2), // Round percentage to two decimal places
+      percentage: entry.percentage.toFixed(2), // Round percentage to two decimal places
       value: entry.value, // Include raw value for completeness
     }));
 

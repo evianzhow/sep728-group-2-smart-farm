@@ -1,7 +1,7 @@
 <template>
   <div class="rules-page">
     <h1>Automation Rules</h1>
-    
+
     <!-- Add Rule Section -->
     <div class="add-rule">
       <h2>Add a Rule</h2>
@@ -22,7 +22,7 @@
         <!-- Trigger Sensor -->
         <div class="form-group">
           <label for="triggerSensor">Trigger Sensor:</label>
-          <select id="triggerSensor" v-model="newRule.sensor" required>
+          <select id="triggerSensor" v-model="newRule.sensor" @change="updateSensor" required>
             <option value="" disabled>Select Sensor</option>
             <option value="SteamValue">Steam - Value</option>
             <option value="SteamPercentage">Steam - Percentage</option>
@@ -40,7 +40,8 @@
             <option value="LightPercentage">Light - Percentage</option>
             <option value="Button">Button</option>
             <option value="PIR">PIR</option>
-            <option value="RelayLED">Relay/LED</option>
+            <option value="Relay">Relay</option>
+            <option value="LED">LED</option>
             <option value="Servo">Servo</option>
           </select>
         </div>
@@ -48,42 +49,27 @@
         <!-- Type -->
         <div class="form-group">
           <label for="type">Type:</label>
-          <select id="type" v-model="newRule.type" @change="resetType" required>
+          <select id="type" v-model="newRule.type" required>
             <option value="" disabled>Select Type</option>
-            <option value="threshold">Threshold</option>
-            <option value="event">Event</option>
+            <option value="threshold" :disabled="newRule.sensor === 'Button' || newRule.sensor === 'PIR' || newRule.sensor === 'Relay' || newRule.sensor === 'LED' || newRule.sensor === 'Servo'">Threshold</option>
+            <option value="event" :disabled="newRule.sensor === 'SteamValue' || newRule.sensor === 'SteamPercentage' || newRule.sensor === 'DHT11Humidity' || newRule.sensor === 'DHT11TemperatureCelsius' || newRule.sensor === 'DHT11TemperatureFahrenhei' || newRule.sensor === 'DHT11TemperatureKelvin' || newRule.sensor === 'DHT11DewPointCelsius' || newRule.sensor === 'SoilValue' || newRule.sensor === 'SoilPercentage' || newRule.sensor === 'WaterValue' || newRule.sensor === 'WaterPercentage' || newRule.sensor === 'UltrasonicDistance' || newRule.sensor === 'LightValue' || newRule.sensor === 'LightPercentage'">Event</option>
           </select>
         </div>
 
         <!-- Operator and Value -->
         <div class="form-group">
-          <label for="operator">Operation:</label>
-          <select
-            id="operator"
-            v-model="newRule.operator"
-            :disabled="!newRule.type"
-            required
-          >
+          <label for="operator">Operator:</label>
+          <select id="operator" v-model="newRule.operator" :disabled="!newRule.type" required>
             <option v-for="op in operators" :key="op" :value="op">{{ op }}</option>
           </select>
-          <input
-            id="thresholdValue"
-            type="number"
-            v-model="newRule.thresholdValue"
-            :disabled="newRule.type === 'event'"
-            placeholder="Input Threshold Value"
-          />
+          <input id="thresholdValue" type="number" v-model="newRule.thresholdValue" :disabled="newRule.type === 'event'"
+            placeholder="Input Threshold Value" />
         </div>
 
         <!-- Linked Controller -->
         <div class="form-group">
           <label for="linkedController">Linked Controller:</label>
-          <select
-            id="linkedController"
-            v-model="newRule.controller"
-            @change="updateActions"
-            required
-          >
+          <select id="linkedController" v-model="newRule.controller" @change="updateActions" required>
             <option value="" disabled>Select Controller</option>
             <option value="OperateFan">Fan</option>
             <option value="OperateBuzzer">Buzzer</option>
@@ -113,36 +99,38 @@
 
     <!-- Existing Rules Section -->
     <div class="existing-rules">
-  <h2>Existing Rules</h2>
-  <table v-if="rules.length > 0">
-    <thead>
-      <tr>
-        <th>Rule ID</th>
-        <th>Trigger Sensor</th>
-        <th>Type</th>
-        <th>Operator</th>
-        <th>Threshold</th>
-        <th>Controller</th>
-        <th>Action</th>
-        <th>Time</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(rule, index) in rules" :key="index">
-        <td>{{ rule.id }}</td>
-        <td>{{ rule.trigger_sensor }}</td>
-        <td>{{ rule.type }}</td>
-        <td>{{ rule.op }}</td>
-        <td>{{ rule.threshold }}</td>
-        <td>{{ rule.target_controller }}</td>
-        <td>{{ rule.action }}</td>
-        <td>{{ rule.created_at }}</td>
-        <td> <button @click="deleteRule(index)">Delete</button> </td>
-      </tr>
-    </tbody>
-  </table>
-  <p v-else>No rules found.</p>
-</div>
+      <h2>Existing Rules</h2>
+      <table v-if="rules.length > 0">
+        <thead>
+          <tr>
+            <th>Rule ID</th>
+            <th>Trigger Sensor</th>
+            <th>Type</th>
+            <th>Operator</th>
+            <th>Threshold</th>
+            <th>Controller</th>
+            <th>Action</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(rule, index) in rules" :key="index">
+            <td>{{ rule.id }}</td>
+            <td>{{ rule.trigger_sensor }}</td>
+            <td>{{ rule.type }}</td>
+            <td>{{ rule.op }}</td>
+            <td>{{ rule.threshold }}</td>
+            <td>{{ rule.target_controller }}</td>
+            <td>{{ rule.action }}</td>
+            <td>{{ new Date(rule.created_at).toLocaleTimeString([], {
+              year: 'numeric', month: '2-digit', day: '2-digit',
+              hour: '2-digit', minute: '2-digit', second: '2-digit' }) }}</td>
+            <td> <button @click="deleteRule(index)">Delete</button> </td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-else>No rules found.</p>
+    </div>
 
 
   </div>
@@ -165,49 +153,43 @@ export default {
         controller: "",
         action: "",
       },
+      types: ["threshold", "event"],
       rules: [], // Store existing rules
       actions: [], // Dynamically updated actions based on controller
+      operators: [], // Dynamically updated operators based on sensor and type
     };
   },
   computed: {
-    operators() {
-      if (this.newRule.type === "threshold") {
-        return [">=", "<=", "==",">","<","!="]; // Threshold operators
-      } else if (this.newRule.type === "event") {
-        return ["ON", "OFF"]; // Event operators
-      }
-      return [];
-    },
   },
   methods: {
     mapSensorToTrigger(sensor) {
-  const sensorMap = {
-    SteamValue: "steam.value",
-    SteamPercentage: "steam.percentage",
-    DHT11Humidity: "dht11.humidity",
-    DHT11TemperatureCelsius: "dht11.temperature.celsius",
-    DHT11TemperatureFahrenhei: "dht11.temperature.fahrenheit",
-    DHT11TemperatureKelvin: "dht11.temperature.kelvin",
-    DHT11DewPointCelsius: "dht11.dewpoint.celsius",
-    SoilValue: "soil.value",
-    SoilPercentage: "soil.percentage",
-    WaterValue: "water.value",
-    WaterPercentage: "water.percentage",
-    UltrasonicDistance: "ultrasonic.distance",
-    LightValue: "light.value",
-    LightPercentage: "light.percentage",
-    Button: "button",
-    PIR: "pir",
-    RelayLED: "relay",
-    Servo: "servo",
-  };
-  return sensorMap[sensor] || "unknown_sensor";
-},
+      const sensorMap = {
+        SteamValue: "steam.value",
+        SteamPercentage: "steam.percentage",
+        DHT11Humidity: "dht11.humidity",
+        DHT11TemperatureCelsius: "dht11.temperature.celsius",
+        DHT11TemperatureFahrenhei: "dht11.temperature.fahrenheit",
+        DHT11TemperatureKelvin: "dht11.temperature.kelvin",
+        DHT11DewPointCelsius: "dht11.dewpoint.celsius",
+        SoilValue: "soil.value",
+        SoilPercentage: "soil.percentage",
+        WaterValue: "water.value",
+        WaterPercentage: "water.percentage",
+        UltrasonicDistance: "ultrasonic.distance",
+        LightValue: "light.value",
+        LightPercentage: "light.percentage",
+        Button: "button",
+        PIR: "pir",
+        RelayLED: "relay",
+        Servo: "servo",
+      };
+      return sensorMap[sensor] || "unknown_sensor";
+    },
 
 
     handleOperatorChange() {
-      // Automatically set thresholdValue to 0 when 'ON' or 'OFF' is selected
-      if (this.newRule.operator === "ON" || this.newRule.operator === "OFF") {
+      // Automatically set thresholdValue to null when 'event' is selected
+      if (this.newRule.type === "event") {
         this.newRule.thresholdValue = null;
       }
     },
@@ -215,38 +197,43 @@ export default {
     mapActionOP(sensor, op) {
       const OPMap = {
         Button: {
-          ON: "pressed",
-          OFF: "released",
+          "Pressed": "pressed",
+          "Released": "released",
         },
         PIR: {
-          ON: "detected",
-          OFF: "not-detected",
+          "Detected": "detected",
+          "Not Detected": "not-detected",
         },
         Relay: {
-          ON: "active",
-          OFF: "inactive",
+          "Active(ON)": "active",
+          "Active(OFF)": "inactive",
+        },
+        LED: {
+          "Active(ON)": "active",
+          "Active(OFF)": "inactive",
         },
         Servo: {
-          ON: "OPEN",
-          OFF: "CLOSED",
+          "OPEN": "OPEN",
+          "HALF_OPEN": "HALF_OPEN",
+          "CLOSED": "CLOSED",
         },
       };
 
-  // Check if the sensor exists in the OPMap
-  if (OPMap[sensor]) {
-    // Check if the op exists in the mapped sensor's operations
-    return OPMap[sensor][op] || op; // Fallback to original `op` if no match
-  }
+      // Check if the sensor exists in the OPMap
+      if (OPMap[sensor]) {
+        // Check if the op exists in the mapped sensor's operations
+        return OPMap[sensor][op] || op; // Fallback to original `op` if no match
+      }
 
-  // If the sensor doesn't exist in OPMap, return the original `op`
-  return op;
-},
+      // If the sensor doesn't exist in OPMap, return the original `op`
+      return op;
+    },
 
 
     extractRuleData() {
       return {
         trigger_sensor: this.mapSensorToTrigger(this.newRule.sensor),
-        type:this.newRule.type,
+        type: this.newRule.type,
         op: this.mapActionOP(this.newRule.sensor, this.newRule.operator),
         threshold: this.newRule.thresholdValue ?? null,
         target_controller: this.mapControllerToTarget(this.newRule.controller),
@@ -258,76 +245,76 @@ export default {
     },
 
     mapControllerToTarget(controller) {
-  const controllerMap = {
-    OperateBuzzer: "buzzer",
-    OperateFan: "fan",
-    OperateServo: "servo",
-    OperateRelay: "relay",
-    OperateLED: "led",
-  };
+      const controllerMap = {
+        OperateBuzzer: "buzzer",
+        OperateFan: "fan",
+        OperateServo: "servo",
+        OperateRelay: "relay",
+        OperateLED: "led",
+      };
 
-  return controllerMap[controller] || "unknown_controller"; // Fallback for unsupported controllers
-},
+      return controllerMap[controller] || "unknown_controller"; // Fallback for unsupported controllers
+    },
 
 
     mapActionToTarget(controller, action) {
       const actionMap = {
-    OperateFan: (action) => {
-      const percentageMap = {
-        "0S": "duration=0;frequency=6000",
-        "5S": "duration=5000;frequency=6000",
-        "10S": "duration=10000;frequency=6000",
-        "30S": "duration=30000;frequency=6000",
-      };
-      return percentageMap[action] || { speed: 0 }; // Fallback if no match
-    },
-    OperateServo: (action) => {
-      const percentageMap = {
-        "Open": "position=OPEN",
-        "Half Open": "position=HALF_OPEN",
-        "Closed": "position=CLOSED",
-      };
-      return percentageMap[action] || { speed: 0 }; // Fallback if no match
-    },
-    OperateBuzzer: (action) => {
-      const percentageMap = {
-        "0%": "speed=0",
-        "25%": "speed=64",
-        "50%": "speed=125",
-        "75%": "speed=189",
-        "100%": "speed=250",
-      };
-      return percentageMap[action] || { speed: 0 }; // Fallback if no match
-    },
-    OperateRelay: (action) => {
-      const percentageMap = {
-        "Active(ON)": "active=true",
-        "Active(OFF)": "active=false"
-      };
-      return percentageMap[action] || { speed: 0 }; // Fallback if no match
-    },
-    OperateLED: (action) => {
-      const percentageMap = {
-        "Active(ON)": "active=true",
-        "Active(OFF)": "active=false"
-      };
-      return percentageMap[action] || { speed: 0 }; // Fallback if no match
-    },
-    OperateLCD: (action) => {
-      const percentageMap = {
-        "5S": "duration=2;message=Hellow",
-        "10S": "duration=64;message=Hellow",
-      };
-      return percentageMap[action] || { speed: 0 }; // Fallback if no match
-    },
+        OperateBuzzer: (action) => {
+          const percentageMap = {
+            "0S": "duration=0;frequency=6000",
+            "5S": "duration=5000;frequency=6000",
+            "10S": "duration=10000;frequency=6000",
+            "30S": "duration=30000;frequency=6000",
+          };
+          return percentageMap[action] || {}; // Fallback if no match
+        },
+        OperateServo: (action) => {
+          const percentageMap = {
+            "OPEN": "position=OPEN",
+            "HALF_OPEN": "position=HALF_OPEN",
+            "CLOSED": "position=CLOSED",
+          };
+          return percentageMap[action] || {}; // Fallback if no match
+        },
+        OperateFan: (action) => {
+          const percentageMap = {
+            "0%": "speed=0",
+            "25%": "speed=63",
+            "50%": "speed=127",
+            "75%": "speed=191",
+            "100%": "speed=255",
+          };
+          return percentageMap[action] || {}; // Fallback if no match
+        },
+        OperateRelay: (action) => {
+          const percentageMap = {
+            "Active(ON)": "active=true",
+            "Active(OFF)": "active=false"
+          };
+          return percentageMap[action] || {}; // Fallback if no match
+        },
+        OperateLED: (action) => {
+          const percentageMap = {
+            "Active(ON)": "active=true",
+            "Active(OFF)": "active=false"
+          };
+          return percentageMap[action] || {}; // Fallback if no match
+        },
+        OperateLCD: (action) => {
+          const percentageMap = {
+            "5S": "duration=5000;message=Hello World",
+            "10S": "duration=10000;message=Hello World",
+          };
+          return percentageMap[action] || {}; // Fallback if no match
+        },
 
       };
 
       if (actionMap[controller]) {
-         return actionMap[controller](action);
+        return actionMap[controller](action);
       } else {
-         return "error"; // Fallback for unsupported controllers
-  }
+        return "error"; // Fallback for unsupported controllers
+      }
     },
 
     async saveRule() {
@@ -346,7 +333,7 @@ export default {
           }
         );
         console.log("Rule successfully saved:", response.data);
-        
+
         alert("Rule saved successfully!");
         this.resetForm(); // Reset the form after saving
       } catch (error) {
@@ -371,56 +358,51 @@ export default {
             },
           }
         );
-        
+
         // Assign the fetched rules to the data property
         this.rules = response.data.data;
         console.log("Loaded rules:", this.rules);
-  } catch (error) {
-    console.error("Error loading rules:", error);
-  }
-},
-
-
-  async deleteRule(index) {
-    try {
-    const token = localStorage.getItem("authToken"); // Retrieve the stored token
-    const ruleId = this.rules[index].id; // Get the rule ID for the selected rule
-
-    // Send DELETE request to the API
-    await axios.delete(
-      `https://gorgeous-glowworm-definite.ngrok-free.app/rules/${ruleId}`,
-      {
-        headers: {
-          Authorization: token, // Include token in headers
-        },
+      } catch (error) {
+        console.error("Error loading rules:", error);
       }
-    );
-
-    // Remove the rule from the local list
-    this.rules.splice(index, 1);
-
-    alert(`Rule ID ${ruleId} deleted successfully.`);
-    console.log(`Rule ID ${ruleId} deleted successfully.`);
-  } catch (error) {
-    console.error("Error deleting rule:", error);
-    alert("Failed to delete the rule. Please try again.");
-  }
-  },
-
-    resetType() {
-      // Clear operator and threshold value when type changes
-      this.newRule.operator = "";
-      this.newRule.thresholdValue = null;
     },
 
-    updateActions() {
-    // Dynamically update actions based on selected controller
-      switch (this.newRule.controller) {
+
+    async deleteRule(index) {
+      try {
+        const token = localStorage.getItem("authToken"); // Retrieve the stored token
+        const ruleId = this.rules[index].id; // Get the rule ID for the selected rule
+
+        // Send DELETE request to the API
+        await axios.delete(
+          `https://gorgeous-glowworm-definite.ngrok-free.app/rules/${ruleId}`,
+          {
+            headers: {
+              Authorization: token, // Include token in headers
+            },
+          }
+        );
+
+        // Remove the rule from the local list
+        this.rules.splice(index, 1);
+
+        alert(`Rule ID ${ruleId} deleted successfully.`);
+        console.log(`Rule ID ${ruleId} deleted successfully.`);
+      } catch (error) {
+        console.error("Error deleting rule:", error);
+        alert("Failed to delete the rule. Please try again.");
+      }
+    },
+
+    updateActions(event) {
+      // Dynamically update actions based on selected controller
+      console.log("event.target.value:", event.target.value);
+      switch (event.target.value) {
         case "OperateFan":
-          this.actions = ["0S", "5S", "10S", "30S"];
+          this.actions = ["0%", "25%", "50%", "75%", "100%"];
           break;
         case "OperateBuzzer":
-          this.actions = ["0%", "25%", "50%", "75%", "100%"];
+          this.actions = ["0S", "5S", "10S"];
           break;
         case "OperateRelay":
           this.actions = ["Active(ON)", "Inactive(OFF)"];
@@ -429,7 +411,7 @@ export default {
           this.actions = ["Active(ON)", "Inactive(OFF)"];
           break;
         case "OperateServo":
-          this.actions = ["Open", "Half Open", "Closed"];
+          this.actions = ["OPEN", "HALF_OPEN", "CLOSED"];
           break;
         case "OperateLCD":
           this.actions = ["5S", "10S"];
@@ -437,10 +419,61 @@ export default {
         default:
           this.actions = []; // Fallback for unknown controllers
       }
-    this.newRule.action = ""; // Reset action when controller changes
-  },
+      this.newRule.action = ""; // Reset action when controller changes
+    },
 
-    
+    updateOperator(sensorType) {
+      if (sensorType === "threshold") {
+        this.operators = [">=", "<=", "==", ">", "<", "!="]; // Threshold operators
+      } else if (sensorType === "event") {
+        switch (this.newRule.sensor) {
+          case "Button":
+            this.operators = ["Pressed", "Released"];
+            break;
+          case "PIR":
+            this.operators = ["Detected", "Not Detected"];
+            break;
+          case "Relay":
+          case "LED":
+            this.operators = ["Active(ON)", "Active(OFF)"];
+            break;
+          case "Servo":
+            this.operators = ["OPEN", "HALF_OPEN", "CLOSED"];
+            break;
+        }
+      } else {
+        this.operators = [];
+      }
+    },
+
+    updateSensor(event) {
+      console.log("event.target.value:", event.target.value);
+      switch (event.target.value) {
+        case "SteamValue":
+        case "SteamPercentage":
+        case "DHT11Humidity":
+        case "DHT11TemperatureCelsius":
+        case "DHT11TemperatureFahrenhei":
+        case "DHT11TemperatureKelvin":
+        case "DHT11DewPointCelsius":
+        case "SoilValue":
+        case "SoilPercentage":
+        case "WaterValue":
+        case "WaterPercentage":
+        case "UltrasonicDistance":
+        case "LightValue":
+        case "LightPercentage":
+          this.updateOperator("threshold");
+          break;
+        case "Button":
+        case "PIR":
+        case "Relay":
+        case "LED":
+        case "Servo":
+          this.updateOperator("event");
+          break;
+      }
+    },
 
     resetForm() {
       this.newRule = {
@@ -469,7 +502,8 @@ export default {
   font-family: Arial, sans-serif;
 }
 
-h1, h2 {
+h1,
+h2 {
   color: #2d6d92;
 }
 
@@ -487,14 +521,16 @@ form {
   gap: 5px;
 }
 
-input, select {
+input,
+select {
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-input:disabled, select:disabled {
+input:disabled,
+select:disabled {
   background-color: #f0f0f0;
   cursor: not-allowed;
 }
