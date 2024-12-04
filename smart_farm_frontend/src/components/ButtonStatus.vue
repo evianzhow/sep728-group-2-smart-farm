@@ -2,7 +2,7 @@
   <div class="button-status">
     <h3>{{ label }}</h3>
     <div class="status-container">
-      <span>{{ lastUpdatedTime }}</span>
+      <span>{{ new Date(lastUpdatedTime).toLocaleString([], { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }) }}</span>
       <span>{{ status }}</span>
     </div>
   </div>

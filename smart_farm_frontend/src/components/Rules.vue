@@ -279,9 +279,9 @@ export default {
         OperateFan: (action) => {
           const percentageMap = {
             "0%": "speed=0",
-            "25%": "speed=63",
-            "50%": "speed=127",
-            "75%": "speed=191",
+            "25%": "speed=64",
+            "50%": "speed=128",
+            "75%": "speed=192",
             "100%": "speed=255",
           };
           return percentageMap[action] || {}; // Fallback if no match

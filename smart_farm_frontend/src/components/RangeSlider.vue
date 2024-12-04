@@ -1,9 +1,18 @@
 <template>
   <div class="range-slider">
     <h3>{{ label }}</h3>
-    <div class="switch-container" @click="toggleFan">
-      <div class="toggle-button" :class="{ on: isOn }"></div>
-      <span>{{ isOn ? "ON" : "OFF" }}</span>
+    <div class="slider-container">
+      <div class="slider-steps">
+        <div 
+          v-for="step in steps" 
+          :key="step.value"
+          class="step-button"
+          :class="{ active: currentStep === step.value }"
+          @click="setFanSpeed(step.value)"
+        >
+          {{ step.label }}
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -22,15 +31,22 @@ export default {
   },
   data() {
     return {
-      isOn: false, // Default state is OFF
-      fanSpeed: 140, // Default speed when ON
+      currentStep: 0,
+      steps: [
+        { value: 0, label: '0%', speed: 0 },
+        { value: 1, label: '25%', speed: 64 },
+        { value: 2, label: '50%', speed: 128 },
+        { value: 3, label: '75%', speed: 192 },
+        { value: 4, label: '100%', speed: 255 },
+      ],
     };
   },
   methods: {
-    async toggleFan() {
+    async setFanSpeed(step) {
       const token = await this.getAuthToken();
+      const selectedStep = this.steps[step];
       const payload = {
-        speed: this.isOn ? 0 : this.fanSpeed, // 0 for OFF, fanSpeed for ON
+        speed: selectedStep.speed,
       };
 
       try {
@@ -43,13 +59,11 @@ export default {
             },
           }
         );
-        console.log(`Fan ${this.isOn ? "turned off" : "turned on"} successfully`, response.data);
+        console.log(`Fan speed set to ${selectedStep.label}`, response.data);
+        this.currentStep = step;
       } catch (error) {
-        console.error(`Error ${this.isOn ? "turning off" : "turning on"} the fan:`, error);
+        console.error(`Error setting fan speed:`, error);
       }
-
-      // Toggle the switch state
-      this.isOn = !this.isOn;
     },
   },
 };
@@ -71,38 +85,34 @@ export default {
   text-align: center;
 }
 
-.toggle-button {
-  width: 50px;
-  height: 25px;
-  background-color: #ccc;
-  border-radius: 15px;
-  position: relative;
-  transition: all 0.3s;
-  margin-bottom: 10px;
+.slider-container {
+  width: 100%;
+  padding: 10px;
 }
 
-.toggle-button.on {
-  background-color: #007bff;
+.slider-steps {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
 }
 
-.toggle-button::after {
-  content: "";
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 21px;
-  height: 21px;
-  background-color: white;
-  border-radius: 50%;
-  transition: all 0.3s;
-}
-
-.toggle-button.on::after {
-  left: calc(100% - 23px);
-}
-
-.switch-container {
+.step-button {
+  padding: 8px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
   cursor: pointer;
+  flex: 1;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.step-button:hover {
+  background-color: #e0e0e0;
+}
+
+.step-button.active {
+  background-color: #007bff;
+  color: white;
 }
 
 h3 {

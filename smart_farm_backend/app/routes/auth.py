@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Depends
 from fastapi.security import HTTPBasic
 from app.database import SessionLocal
 from app.models import User
@@ -59,3 +59,8 @@ def logout(request: Request):
     if token:
         del sessions[token]
     return {"message": "Successfully logged out"}
+
+@auth_router.get("/ping")
+def ping(user=Depends(get_current_user_from_request)):
+    return {"message": "pong"}
+
