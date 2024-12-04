@@ -109,19 +109,20 @@
     },
     inject: ["getAuthToken"],
     data() {
-    return {
-      authToken: "",
-      illuminationValue: "Loading...", 
-      WaternValue: "Loading...",
-      steamValue: "Loading...",
-      ultrasonicValue: "Loading...",
-      temperatureValue1: "Loading...",
-      temperatureValue2: "Loading...",
-      temperatureValue3: "Loading...",
-      humidityValue: "Loading...",
-      dewPointValue: "Loading...",
-      soilHumidityValue: "Loading...",
-    };
+      return {
+        intervalId: null, // Add this to store the interval ID
+        authToken: "",
+        illuminationValue: "Loading...", 
+        WaternValue: "Loading...",
+        steamValue: "Loading...",
+        ultrasonicValue: "Loading...",
+        temperatureValue1: "Loading...",
+        temperatureValue2: "Loading...",
+        temperatureValue3: "Loading...",
+        humidityValue: "Loading...",
+        dewPointValue: "Loading...",
+        soilHumidityValue: "Loading...",
+      };
   },
     methods: {
       navigateToDetails(title) {
@@ -324,6 +325,7 @@
     //------------------------------------------------------------
     },
     async mounted() {
+      this.intervalId = setInterval(async () => {
         await this.fetchIlluminationValue(); 
         await this.fetchWaterValue();
         await this.fetchSteamValue();
@@ -332,7 +334,14 @@
         await this.fetchHumidityValue();
         await this.fetchDewPointValue();
         await this.fetchSoilHumidityValue();
-      },
+      }, 5000);
+    },
+    unmounted() {
+      // Clear the interval when component is unmounted
+      if (this.intervalId) {
+        clearInterval(this.intervalId);
+      }
+    },
   };
 
   </script>
