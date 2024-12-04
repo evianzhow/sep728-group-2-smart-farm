@@ -65,6 +65,25 @@ export default {
         console.error(`Error setting fan speed:`, error);
       }
     },
+    async fetchData() {
+      const stepMapping = {
+        0: 0,
+        64: 1,
+        128: 2,
+        192: 3,
+        255: 4,
+      };
+      const token = await this.getAuthToken();
+      const response = await axios.get("https://gorgeous-glowworm-definite.ngrok-free.app/controllers/fan/preview", {
+        headers: {
+          Authorization: token,
+        },
+      });
+      this.currentStep = stepMapping[response.data.speed] || 0;
+    },
+  },
+  async mounted() {
+    this.fetchData();
   },
 };
 </script>

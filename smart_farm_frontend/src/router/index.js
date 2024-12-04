@@ -12,10 +12,10 @@ import ServoDetails from '@/components/ServoDetails.vue';
 import LEDDetails from '@/components/LEDDetails.vue';
 import RelayDetails from '@/components/RelayDetails.vue';
 import FanDetails from '@/components/FanDetails.vue';
-
+import LoginPage from '@/components/LoginPage.vue';
 
 const routes = [
-  { path: "/", redirect: "/home" },
+  { path: "/", redirect: "/login" },
   { path: "/home", component: Home },
   { path: "/rules", component: Rules },
   { path: "/settings", component: Settings },
@@ -28,6 +28,7 @@ const routes = [
   { path: '/led-details', name: 'LEDDetails', component: LEDDetails },
   { path: '/relay-details', name: 'RelayDetails', component: RelayDetails },
   { path: '/fan-details', name: 'FanDetails', component: FanDetails },
+  { path: '/login', name: 'LoginPage', component: LoginPage },
 ];
 
 const router = createRouter({

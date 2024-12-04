@@ -1,12 +1,12 @@
 <template>
-    <div class="toggle-switch">
-      <h3>{{ label }}</h3>
-      <div class="switch-container" @click="toggleDevice">
-        <div class="toggle-button" :class="{ on: isOn }"></div>
-        <span>{{ isOn ? 'ON' : 'OFF' }}</span>
-      </div>
+  <div class="toggle-switch">
+    <h3>{{ label }}</h3>
+    <div class="switch-container" @click="toggleDevice">
+      <div class="toggle-button" :class="{ on: isOn }"></div>
+      <span>{{ isOn ? 'ON' : 'OFF' }}</span>
     </div>
-  </template>
+  </div>
+</template>
 
 <script>
 import axios from "axios";
@@ -32,13 +32,13 @@ export default {
 
       const params = this.isOn
         ? {
-            active: false,
-            timestamp: now,
-          }
+          active: false,
+          timestamp: now,
+        }
         : {
-            active: true,
-            timestamp: now,
-          };
+          active: true,
+          timestamp: now,
+        };
 
       // Determine API endpoint based on the label
       let endpoint = "";
@@ -63,6 +63,18 @@ export default {
         console.error(`Failed to toggle ${this.label}:`, error);
       }
     },
+    async fetchData() {
+      const token = await this.getAuthToken();
+      const response = await axios.get(`https://gorgeous-glowworm-definite.ngrok-free.app/controllers/${this.label}/preview`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      this.isOn = response.data.active;
+    },
+  },
+  async mounted() {
+    this.fetchData();
   },
 };
 </script>
