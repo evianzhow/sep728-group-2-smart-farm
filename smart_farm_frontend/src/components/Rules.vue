@@ -180,7 +180,8 @@ export default {
         LightPercentage: "light.percentage",
         Button: "button",
         PIR: "pir",
-        RelayLED: "relay",
+        Relay: "relay",
+        LED: "led",
         Servo: "servo",
       };
       return sensorMap[sensor] || "unknown_sensor";

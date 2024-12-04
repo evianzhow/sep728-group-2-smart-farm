@@ -76,7 +76,7 @@ export default {
                 : 0; // Pressed/Released
           }
           // response.data.timestamp is should like "2024-12-03T21:46:18.000Z"
-          this.lastUpdatedTime = new Date(response.data.timestamp).toLocaleTimeString();
+          this.lastUpdatedTime = response.data.timestamp;
         } else {
           console.error("No endpoint configured for label:", this.label);
         }
