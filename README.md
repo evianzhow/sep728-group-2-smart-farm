@@ -37,7 +37,7 @@ MQTT_PASSWORD=<your_mqtt_password>
    - Be sure to change the backend service URL (`apiEndpoint`) in `smart_farm_frontend/src/App.vue` to the correct host and port.
    - The best way to run it is to use `npm install` to install the dependencies and then `npm run serve` to start the development server.
    - **OR**
-   - Run `npm run build` to build the project and then install `npm install -g serve` and `serve -t dist/` to start the static server.
+   - Run `npm run build` to build the project and then install `npm install -g serve` and `serve -s dist/` to start the static server.
 
 ## License
 
